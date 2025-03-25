@@ -1,0 +1,33 @@
+# COMMON
+target_col: "HadHeartAttack"
+metric: accuracy
+
+# DATA TRANSFORMATION
+data_transformation: "7" # id của data_transformation
+do_smote: f # t: true, f: false
+
+# MODEL TRAINING
+is_first_time: f # t or f
+model_name: XGB_12
+param_grid_model_desc:
+      n_estimators: 300
+      max_depth: 50
+      reg_alpha: 0
+      reg_lambda: 1
+      learning_rate: 0.001
+      subsample: 0.9
+      colsample_bytree: 0.9
+
+model_trainer_type: one # rcv: randomisedcv, gcv: gridcv, r: randomisedTrainVal, g: gridTrainVal, one: only one model
+N_ITER: 5 # số tổ hợp chọn khi chạy random search
+
+# MODEL EVALUATION
+evaluated_data_transformation: "10"
+evaluated_model_name: XGB_1
+
+# MONITOR PLOT
+monitor_plotter:
+      monitor_plot_html_path: "artifacts/monitor_plot.html"
+      target_val_value: 97
+      max_val_value: 100
+      dtick_y_value: 5
