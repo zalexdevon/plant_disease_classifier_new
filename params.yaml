@@ -2,6 +2,10 @@
 target_col: "HadHeartAttack"
 metric: accuracy
 
+# DATA INGESTION
+image_size: 256
+batch_size: 32
+
 # DATA TRANSFORMATION
 data_transformation: "7" # id của data_transformation
 do_smote: f # t: true, f: false

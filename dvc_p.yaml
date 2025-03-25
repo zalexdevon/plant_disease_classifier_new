@@ -3,7 +3,6 @@ stages:
             cmd: python src/classifier/pipeline/stage_03_data_transformation.py
             params:
                   - data_transformation
-
             outs:
                   - artifacts/data_transformation/${P}
 
@@ -14,7 +13,6 @@ stages:
             params:
                   - model_name
 
-      # MODEL_EVALUATION
       model_evaluation:
             cmd: python src/classifier/pipeline/stage_05_model_evaluation.py
             params:

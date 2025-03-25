@@ -20,39 +20,8 @@ import pickle
 import plotly.express as px
 import pandas as pd
 import os
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import RandomizedSearchCV, PredefinedSplit
-from sklearn.svm import SVC, LinearSVC
-from sklearn.linear_model import SGDClassifier
-from sklearn.ensemble import (
-    RandomForestClassifier,
-    GradientBoostingClassifier,
-    ExtraTreesClassifier,
-)
 import numpy as np
-from xgboost import XGBClassifier
-from lightgbm import LGBMClassifier
-from sklearn.base import clone
-from sklearn.pipeline import Pipeline
-from sklearn.decomposition import PCA, IncrementalPCA
-from sklearn.model_selection import GridSearchCV
-from sklearn.inspection import permutation_importance
-
-
-BASE_MODELS = {
-    "LR": LogisticRegression(random_state=42),
-    "LRe": LogisticRegression(penalty="elasticnet", solver="saga", random_state=42),
-    "LR1": LogisticRegression(penalty="l1", solver="saga", random_state=42),
-    "LSVC": LinearSVC(random_state=42),
-    "SVCP": SVC(kernel="poly", degree=2, random_state=42),
-    "SVCR": SVC(kernel="rbf", random_state=42),
-    "RF": RandomForestClassifier(random_state=42),
-    "ET": ExtraTreesClassifier(random_state=42),
-    "GB": GradientBoostingClassifier(random_state=42),
-    "SGD": GradientBoostingClassifier(random_state=42),
-    "XGB": XGBClassifier(random_state=42),
-    "LGB": LGBMClassifier(verbose=-1, random_state=42),
-}
+import tensorflow as tf
 
 
 def get_sum(a, b):
@@ -426,54 +395,8 @@ def get_num_de_cac_combinations(list_of_list):
     return math.prod(map(len, list_of_list))
 
 
-def get_features_target_spliter_for_CV_train_val(
-    train_features, train_target, val_features, val_target
-):
-    """Get total features, target, spliter to do GridSearchCV or RandomisedSearchCV with type is **train-val**
-
-    Args:
-        train_features (dataframe): _description_
-        train_target (dataframe): _description_
-        val_features (dataframe): _description_
-        val_target (dataframe): _description_
-    Returns:
-        features, target,       spliter
-
-
-    """
-
-    features = pd.concat([train_features, val_features], axis=0)
-    target = pd.concat([train_target, val_target], axis=0)
-    spliter = PredefinedSplit(
-        test_fold=[-1] * len(train_features) + [0] * len(val_features)
-    )
-
-    return features, target, spliter
-
-
-def get_features_target_spliter_for_CV_train_train(train_features, train_target):
-    """Get total features, target, spliter to do GridSearchCV or RandomisedSearchCV with type is **train-train** <br>
-    When you want to train on training set and assess on that training set
-
-
-    Args:
-        train_features (dataframe): _description_
-        train_target (dataframe): _description_
-        val_features (dataframe): _description_
-        val_target (dataframe): _description_
-    """
-
-    features = pd.concat([train_features, train_features], axis=0)
-    target = pd.concat([train_target, train_target], axis=0)
-    spliter = PredefinedSplit(
-        test_fold=[-1] * len(train_features) + [0] * len(train_features)
-    )
-
-    return features, target, spliter
-
-
 @ensure_annotations
-def read_yaml(path_to_yaml: Path) -> ConfigBox:
+def read_yaml(path_to_yaml: str) -> ConfigBox:
     """reads yaml file and returns
 
     Args:
@@ -662,17 +585,6 @@ def get_param_grid_model(param_grid_model: dict):
     return dict(zip(list(param_grid_model.keys()), values))
 
 
-def get_base_model(model_name: str):
-    """Get the Model object from model_name <br>
-
-    VD: XGB_1 -> XGB -> XGBRegressor
-    """
-
-    model_name_real = model_name.split("_")[0]
-
-    return BASE_MODELS[model_name_real]
-
-
 def sub_param_for_yaml_file(src_path: str, des_path: str, replace_dict: dict):
     """Substitue params in src_path and save in des_path
 
@@ -763,64 +675,6 @@ def find_coef_with_classifier(train_data, model):
     return score
 
 
-def find_best_n_components_of_PCA(
-    train_features,
-    train_target,
-    val_features,
-    val_target,
-    placeholdout_model,
-    list_n_components,
-    scoring="accuracy",
-):
-    """Find best n_components of PCA
-
-    Args:
-        placeholdout_model (_type_): model like LR, XGB, ... without hyperparameters except random_state
-        list_n_components (_type_): list of n_components used
-        scoring (str, optional): scoring. Defaults to "accuracy".
-
-    Returns:
-        _type_: best n_components
-    """
-    features, target, splitter = get_features_target_spliter_for_CV_train_val(
-        train_features, train_target, val_features, val_target
-    )
-    param_grid = {"1__n_components": list_n_components}
-    pp = Pipeline(
-        steps=[
-            ("1", PCA(random_state=42)),
-            ("2", placeholdout_model),
-        ]
-    )
-    gs = GridSearchCV(pp, param_grid=param_grid, cv=splitter, scoring=scoring)
-    gs.fit(features, target)
-    return gs.best_params_
-
-
-def find_feature_score_by_permutation_importance(
-    train_features, train_target, fitted_model
-):
-    """Find the feature score by doing permutation_importance
-
-    Args:
-        fitted_model (_type_): fitted model, not base model
-
-    Returns:
-        DataFrame: _description_
-    """
-    result = permutation_importance(
-        fitted_model, train_features, train_target, n_repeats=10, random_state=42
-    )
-    result_df = pd.DataFrame(
-        data={
-            "feature": train_features.columns.tolist(),
-            "score": result.importances_mean * 100,
-        }
-    )
-    result_df = result_df.sort_values(by="score", ascending=False)
-    return result_df
-
-
 def get_params_transform_list_to_1_value(param_grid):
     """Create params with key and one value not a list with one value
 
@@ -866,3 +720,62 @@ def get_describe_stats_for_numeric_cat_cols(data):
     result = pd.concat([min_of_cols, max_of_cols, median_of_cols], axis=1).T
 
     return result
+
+
+def split_tfdataset_into_tranvaltest_1(
+    ds: tf.data.Dataset,
+    train_split=0.8,
+    val_split=0.1,
+    shuffle=True,
+    shuffle_size=10000,
+):
+    """Chia dataset thành tập train, val, test theo tỉ lệ nhất định
+
+    Args:
+        ds (tf.data.Dataset): _description_
+        train_split (float, optional): _description_. Defaults to 0.8.
+        val_split (float, optional): _description_. Defaults to 0.1.
+        shuffle (bool, optional): _description_. Defaults to True.
+        shuffle_size (int, optional): _description_. Defaults to 10000.
+
+    Returns:
+        train, val, test
+    """
+    ds_size = len(ds)
+
+    if shuffle:
+        ds = ds.shuffle(shuffle_size, seed=42)
+
+    train_size = int(train_split * ds_size)
+    val_size = int(val_split * ds_size)
+
+    train_ds = ds.take(train_size)
+    val_ds = ds.skip(train_size).take(val_size)
+    test_ds = ds.skip(train_size).skip(val_size)
+
+    return train_ds, val_ds, test_ds
+
+
+def cache_prefetch_tfdataset_2(ds: tf.data.Dataset, shuffle_size=1000):
+    return ds.cache().shuffle(shuffle_size).prefetch(buffer_size=tf.data.AUTOTUNE)
+
+
+def train_test_split_tfdataset_3(
+    ds: tf.data.Dataset, test_size=0.2, shuffle=True, shuffle_size=10000
+):
+    """Chia dataset thành tập train, test theo tỉ lệ của tập test
+
+    Returns:
+        _type_: train_ds, test_ds
+    """
+    ds_size = len(ds)
+
+    if shuffle:
+        ds = ds.shuffle(shuffle_size, seed=42)
+
+    test_size = int(test_size * ds_size)
+
+    test_ds = ds.take(test_size)
+    train_ds = ds.skip(test_size)
+
+    return train_ds, test_ds
