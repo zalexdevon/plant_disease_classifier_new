@@ -9,10 +9,10 @@ model_trainer:
       model_name: CONVNET_1
       epochs: 10
       callbacks: 
-            - EarlyStopping(monitor=val_accuracy, patience=2, min_delta=1)
+            - EarlyStopping(monitor='val_accuracy', patience=2, min_delta=1)
       layers: 
             # data augmentation 
-            - RandomFlip(mode=horizontal_and_vertical)
+            - RandomFlip(mode='horizontal_and_vertical')
             - RandomRotation(factor=0.2)
             - RandomZoom(height_factor=0.2)
             # - RandomBrightness(factor=0.2)
@@ -25,13 +25,13 @@ model_trainer:
             - Rescaling(scale = 0.00392) # 1 / 255
 
             # Convnet 
-            - Conv2D(filters=32, kernel_size=3, activation=relu)
+            - Conv2D(filters=32, kernel_size=3, activation='relu')
             - MaxPooling2D(pool_size=2)
 
             # Classifier
             - Flatten()
-            - Dense(units=  64, activation=relu)
-            - Dense(units=3, activation=softmax)
+            - Dense(units=  64, activation='relu')
+            - Dense(units=3, activation='softmax')
 
       optimizer: RMSprop()
       loss: sparse_categorical_crossentropy
