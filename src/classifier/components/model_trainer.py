@@ -22,7 +22,7 @@ class ModelTrainer:
 
     def load_callbacks(self):
         self.callbacks = [
-            TqdmCallback(verbose=2),
+            # TqdmCallback(verbose=2),
             ModelCheckpoint(
                 filepath=self.config.best_model_path,
                 monitor=self.monitor,
@@ -61,7 +61,7 @@ class ModelTrainer:
             self.train_ds,
             epochs=self.config.epochs,
             batch_size=self.config.batch_size,
-            verbose=0,  # Tắt verbose của keras thay bằng tqdm
+            verbose=1,  # Tắt verbose của keras thay bằng tqdm
             validation_data=self.val_ds,
             callbacks=self.callbacks,
         ).history
