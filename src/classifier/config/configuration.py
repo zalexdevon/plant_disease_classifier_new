@@ -1,12 +1,12 @@
-from classifier.constants import *
-from classifier.Mylib.myfuncs import read_yaml, create_directories
-from classifier.entity.config_entity import (
+from src.classifier.constants import *
+from src.classifier.Mylib.myfuncs import read_yaml, create_directories
+from src.classifier.entity.config_entity import (
     ModelTrainerConfig,
     ModelEvaluationConfig,
     MonitorPlotterConfig,
 )
 from pathlib import Path
-from classifier.Mylib import myfuncs
+from src.classifier.Mylib import myfuncs
 
 
 class ConfigurationManager:
