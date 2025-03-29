@@ -828,6 +828,7 @@ def get_object_from_string_4(text: str):
     # TODO:d
     print("=====")
     for item in param_parts:
+        print(item.strip().split("=")[1])
         print(ast.literal_eval(item.strip().split("=")[1]))
     print("=====")
     # d
