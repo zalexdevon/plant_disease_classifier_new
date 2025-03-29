@@ -4,7 +4,7 @@ stages:
             deps:
                   - artifacts/data_ingestion
             params:
-                  - model_name 
+                  - model_trainer 
 
       model_evaluation:
             cmd: python src/classifier/pipeline/stage_05_model_evaluation.py

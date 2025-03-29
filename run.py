@@ -1,5 +1,5 @@
-from classifier.Mylib.myfuncs import read_yaml, sub_param_for_yaml_file
-from classifier.constants import *
+from src.classifier.Mylib.myfuncs import read_yaml, sub_param_for_yaml_file
+from src.classifier.constants import *
 from pathlib import Path
 import sys
 import os
