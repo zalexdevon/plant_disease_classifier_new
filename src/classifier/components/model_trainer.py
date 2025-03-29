@@ -95,7 +95,7 @@ class ModelTrainer:
         print("========KET QUA MO HINH TOT NHAT================")
         for key, value in results.items():
             print(f"{key}: {value}")
-        print(f"Số epochs đã chạy: {num_epochs}")
+        print(f"Số epochs đã chạy: {num_epochs} / {self.config.epochs}")
 
         # Ghi vào file
         content = "SCORING\n"
