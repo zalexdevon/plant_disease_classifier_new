@@ -22,7 +22,7 @@ class ModelTrainer:
 
     def load_callbacks(self):
         self.callbacks = [
-            TqdmCallback(verbose=1),
+            TqdmCallback(verbose=2),
             ModelCheckpoint(
                 filepath=self.config.best_model_path,
                 monitor=self.monitor,
