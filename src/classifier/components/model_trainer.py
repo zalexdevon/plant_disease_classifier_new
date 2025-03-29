@@ -6,6 +6,7 @@ import numpy as np
 import random
 import time
 from tqdm.keras import TqdmCallback
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.callbacks import Callback, ModelCheckpoint, EarlyStopping
 
@@ -15,8 +16,8 @@ class ModelTrainer:
         self.config = config
 
     def load_data_to_train(self):
-        self.train_ds = myfuncs.load_python_object(self.config.train_ds_path)
-        self.val_ds = myfuncs.load_python_object(self.config.val_ds_path)
+        self.train_ds = tf.data.Dataset.load(self.config.train_ds_path)
+        self.val_ds = tf.data.Dataset.load(self.config.val_ds_path)
         self.monitor = f"val_{self.config.scoring}"
 
     def load_callbacks(self):
