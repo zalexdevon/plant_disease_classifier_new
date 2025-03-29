@@ -7,7 +7,7 @@ model_trainer:
       
       # Model
       root_dir: artifacts/model_trainer/${T}
-      best_model_path: artifacts/model_trainer/${T}/best_model.pkl
+      best_model_path: artifacts/model_trainer/${T}/best_model.keras
       results_path: artifacts/model_trainer/${T}/results.txt
       structure_path: artifacts/model_trainer/${T}/structure.png
 
