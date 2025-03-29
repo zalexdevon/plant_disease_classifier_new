@@ -1,40 +1,32 @@
 from dataclasses import dataclass
 from pathlib import Path
-
-
-@dataclass(frozen=True)
-class DataTransformationConfig:
-    train_data_path: Path
-    val_data_path: Path
-    root_dir: Path
-    preprocessor_path: Path
-    classes_path: Path
-    train_features_path: Path
-    train_target_path: Path
-    val_features_path: Path
-    val_target_path: Path
-    target_col: Path
-    do_smote: str
+from tensorflow.keras.optimizers import RMSprop
 
 
 @dataclass(frozen=True)
 class ModelTrainerConfig:
-    train_feature_path: Path
-    train_target_path: Path
-    val_feature_path: Path
-    val_target_path: Path
+    # config
+    train_ds_path: Path
+    val_ds_path: Path
     root_dir: Path
     best_model_path: Path
-    list_monitor_components_path: Path
+    results_path: Path
+    structure_path: Path
 
-    N_ITER: int
-    data_transformation: int
-    model_name: str
-    param_grid_model_desc: dict
-    param_grid_model: dict
-    model_trainer_type: str
-    metric: str
+    # params
     is_first_time: str
+    model_name: str
+    epochs: int
+    callbacks: list
+    layers: list
+    optimizer: RMSprop
+    loss: str
+    metrics: list
+
+    # common params
+    scoring: str
+    image_size: int
+    batch_size: int
 
 
 # MODEL_EVALUATION

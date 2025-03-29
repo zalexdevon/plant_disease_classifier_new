@@ -1,7 +1,6 @@
 from classifier.constants import *
 from classifier.Mylib.myfuncs import read_yaml, create_directories
 from classifier.entity.config_entity import (
-    DataTransformationConfig,
     ModelTrainerConfig,
     ModelEvaluationConfig,
     MonitorPlotterConfig,
@@ -22,54 +21,45 @@ class ConfigurationManager:
 
         create_directories([self.config.artifacts_root])
 
-    def get_data_transformation_config(self) -> DataTransformationConfig:
-        config = self.config.data_transformation
-
-        create_directories([config.root_dir])
-
-        data_transformation_config = DataTransformationConfig(
-            train_data_path=config.train_data_path,
-            val_data_path=config.val_data_path,
-            root_dir=config.root_dir,
-            preprocessor_path=config.preprocessor_path,
-            classes_path=config.classes_path,
-            train_features_path=config.train_features_path,
-            train_target_path=config.train_target_path,
-            val_features_path=config.val_features_path,
-            val_target_path=config.val_target_path,
-            target_col=self.params.target_col,
-            do_smote=self.params.do_smote,
-        )
-
-        return data_transformation_config
-
     def get_model_trainer_config(
         self,
     ) -> ModelTrainerConfig:
         config = self.config.model_trainer
+        params = self.params.model_trainer
 
         create_directories([config.root_dir])
 
-        param_grid_model = myfuncs.get_param_grid_model(
-            self.params.param_grid_model_desc
-        )
+        list_callbacks = [
+            myfuncs.get_object_from_string_4(callback) for callback in params.callbacks
+        ]
+
+        list_layers = [
+            myfuncs.get_object_from_string_4(layer) for layer in params.layers
+        ]
+
+        optimizer = myfuncs.get_object_from_string_4(params.optimizer)
 
         model_trainer_config = ModelTrainerConfig(
-            train_feature_path=config.train_feature_path,
-            train_target_path=config.train_target_path,
-            val_feature_path=config.val_feature_path,
-            val_target_path=config.val_target_path,
+            # config
+            train_ds_path=config.train_ds_path,
+            val_ds_path=config.val_ds_path,
             root_dir=config.root_dir,
             best_model_path=config.best_model_path,
-            list_monitor_components_path=config.list_monitor_components_path,
-            model_name=self.params.model_name,
-            param_grid_model_desc=self.params.param_grid_model_desc,
-            param_grid_model=param_grid_model,
-            data_transformation=str(self.params.data_transformation),
-            N_ITER=self.params.N_ITER,
-            model_trainer_type=self.params.model_trainer_type,
-            metric=self.params.metric,
-            is_first_time=self.params.is_first_time,
+            results_path=config.results_path,
+            structure_path=config.structure_path,
+            # params
+            is_first_time=params.is_first_time,
+            model_name=params.model_name,
+            epochs=params.epochs,
+            callbacks=list_callbacks,
+            layers=list_layers,
+            optimizer=optimizer,
+            loss=params.loss,
+            metrics=params.metrics,
+            # common params
+            scoring=self.params.scoring,
+            image_size=self.params.image_size,
+            batch_size=self.params.batch_size,
         )
 
         return model_trainer_config

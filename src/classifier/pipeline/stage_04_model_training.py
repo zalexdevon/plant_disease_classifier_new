@@ -7,7 +7,7 @@ from classifier.components.monitor_plotter import (
     MonitorPlotter,
 )
 
-STAGE_NAME = "Model Trainer stage"
+STAGE_NAME = "Model Training stage"
 
 
 class ModelTrainerPipeline:
@@ -19,33 +19,10 @@ class ModelTrainerPipeline:
         model_trainer_config = config.get_model_trainer_config()
         model_trainer = ModelTrainer(config=model_trainer_config)
         model_trainer.load_data_to_train()
-
-        while True:
-            if model_trainer.config.model_trainer_type == "rcv":
-                model_trainer.train_randomisedcv()
-                break
-
-            if model_trainer.config.model_trainer_type == "gcv":
-                model_trainer.train_gridcv()
-                break
-
-            if model_trainer.config.model_trainer_type == "r":
-                model_trainer.train_randomised_train_val()
-                break
-
-            if model_trainer.config.model_trainer_type == "g":
-                model_trainer.train_grid_train_val()
-                break
-
-            if model_trainer.config.model_trainer_type == "one":
-                model_trainer.train_1model()
-                break
-
-        model_trainer.save_list_monitor_components()
-
-        monitor_plot_config = config.get_monitor_plot_config()
-        monitor_plot = MonitorPlotter(config=monitor_plot_config)
-        monitor_plot.plot(model_trainer.list_monitor_components)
+        model_trainer.load_callbacks()
+        model_trainer.load_model()
+        model_trainer.train()
+        model_trainer.save_model()
 
 
 if __name__ == "__main__":

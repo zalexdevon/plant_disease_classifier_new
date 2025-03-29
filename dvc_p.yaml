@@ -1,17 +1,10 @@
-stages:
-      data_transformation:
-            cmd: python src/classifier/pipeline/stage_03_data_transformation.py
-            params:
-                  - data_transformation
-            outs:
-                  - artifacts/data_transformation/${P}
-
+stages: 
       model_trainer:
             cmd: python src/classifier/pipeline/stage_04_model_training.py
             deps:
-                  - artifacts/data_transformation/${P}
+                  - artifacts/data_ingestion
             params:
-                  - model_name
+                  - model_name 
 
       model_evaluation:
             cmd: python src/classifier/pipeline/stage_05_model_evaluation.py

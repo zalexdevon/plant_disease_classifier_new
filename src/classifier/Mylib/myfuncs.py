@@ -22,6 +22,10 @@ import pandas as pd
 import os
 import numpy as np
 import tensorflow as tf
+from sklearn.linear_model import LogisticRegression
+import ast
+from io import StringIO
+import sys
 
 
 def get_sum(a, b):
@@ -779,3 +783,62 @@ def train_test_split_tfdataset_3(
     train_ds = ds.skip(test_size)
 
     return train_ds, test_ds
+
+
+def get_object_from_string_4(text: str):
+    """Get đối tượng từ 1 chuối
+
+    Example:
+        text = "LogisticRegression(C=144, penalty=l1, solver=saga,max_iter=10000,dual=True)"
+
+        -> đối tượng LogisticRegression(C=144, dual=True, max_iter=10000, penalty='l1',solver='saga')
+
+    Args:
+        text (str): _description_
+
+
+    """
+    # Tách tên lớp và tham số
+    class_name, params = text.split("(", 1)
+    params = params.rstrip(")")
+
+    object_class = globals()[class_name]
+
+    if params == "":
+        return object_class()
+
+    # Lấy tham số của đối tượng
+    param_parts = params.split(",")
+    param_parts = [item.strip() for item in param_parts]
+    keys = [item.strip().split("=")[0] for item in param_parts]
+    values = [ast.literal_eval(item.strip().split("=")[1]) for item in param_parts]
+
+    params = dict(zip(keys, values))
+
+    return object_class(**params)
+
+
+def get_object_from_string_using_eval_6(text: str, module):
+    """Get đối tượng từ 1 chuối
+
+    Example:
+        text = 'LogisticRegression(C=144,penalty="l1",solver="saga",max_iter=10000,dual=True)' -> các chuỗi phải được bọc trong cặp ""
+
+        module = sklearn.linear_model
+
+        -> đối tượng LogisticRegression(C=144, dual=True, max_iter=10000, penalty='l1',solver='saga')
+
+    Args:
+        text (str): _description_
+
+
+    """
+
+    # Tách tên lớp và tham số
+    class_name, params = text.split("(", 1)
+    params = params.rstrip(")")
+
+    class_name = getattr(module, class_name)
+
+    # Tạo đối tượng bằng eval (không khuyến khích nếu có dữ liệu không đáng tin cậy)
+    return eval(f"class_name({params})")
