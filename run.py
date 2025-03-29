@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 import os
 
-params = read_yaml(Path(PARAMS_FILE_PATH))
+params = read_yaml(PARAMS_FILE_PATH)
 
 model_name = params.model_trainer.model_name
 evaluated_model_name = params.evaluated_model_name
