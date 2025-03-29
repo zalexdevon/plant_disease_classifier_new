@@ -6,10 +6,10 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_1
-      epochs: 56
+      model_name: CONVNET_2
+      epochs: 50
       callbacks: 
-            - EarlyStopping(monitor='val_accuracy', patience=2, min_delta=1)
+            - EarlyStopping(monitor='val_accuracy', patience=10, min_delta=0.01)
       layers: 
             # data augmentation 
             - RandomFlip(mode='horizontal_and_vertical')
