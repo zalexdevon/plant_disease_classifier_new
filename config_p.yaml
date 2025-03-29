@@ -1,9 +1,11 @@
 artifacts_root: artifacts
 
 model_trainer:
+      # Dữ liệu
       train_ds_path: artifacts/data_ingestion/train_ds
       val_ds_path: artifacts/data_ingestion/val_ds
       
+      # Model
       root_dir: artifacts/model_trainer/${T}
       best_model_path: artifacts/model_trainer/${T}/best_model.pkl
       results_path: artifacts/model_trainer/${T}/results.txt
@@ -12,8 +14,6 @@ model_trainer:
 
 model_evaluation:
       test_data_path: artifacts/data_correction_1/test_data.pkl
-
-      preprocessor_path: artifacts/data_transformation/${PE}/preprocessor.pkl
 
       model_path: artifacts/model_trainer/${E}/best_model.pkl
       result: artifacts/test_model_results.txt
