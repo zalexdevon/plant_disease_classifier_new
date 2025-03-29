@@ -86,10 +86,10 @@ class ModelTrainer:
         }
 
         # TODO: d
-        print(f"loss: {self.history["loss"]}")
-        print(f"accuracy: {self.history["accuracy"]}")
-        print(f"val_loss: {self.history["val_loss"]}")
-        print(f"val_accuracy: {self.history["val_accuracy"]}")
+        print(f"loss: {self.history['loss']}")
+        print(f"accuracy: {self.history['accuracy']}")
+        print(f"val_loss: {self.history['val_loss']}")
+        print(f"val_accuracy: {self.history['val_accuracy']}")
         # d
 
         for metric in self.config.metrics:
