@@ -175,3 +175,5 @@ cython_debug/
 Data/
 artifacts/
 src/research.ipynb
+Data.zip
+artifacts.zip
