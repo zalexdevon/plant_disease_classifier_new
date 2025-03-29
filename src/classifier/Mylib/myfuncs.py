@@ -823,17 +823,19 @@ def get_object_from_string_4(text: str):
     # Lấy tham số của đối tượng
     param_parts = params.split(",")
     param_parts = [item.strip() for item in param_parts]
-    keys = [item.strip().split("=")[0] for item in param_parts]
+    keys = [item.split("=")[0].strip() for item in param_parts]
 
     # TODO:d
     print("=====")
     for item in param_parts:
         print(item.strip().split("=")[1])
-        print(ast.literal_eval(item.strip().split("=")[1]))
+        print(ast.literal_eval(item.split("=")[1].strip()))
     print("=====")
     # d
 
-    values = [ast.literal_eval(item.strip().split("=")[1]) for item in param_parts]
+    values = [
+        ast.literal_eval(item.strip().split("=")[1].strip()) for item in param_parts
+    ]
 
     params = dict(zip(keys, values))
 
