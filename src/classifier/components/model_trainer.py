@@ -70,10 +70,10 @@ class ModelTrainer:
         # Tìm index ứng với best model
         best_model_index = None
         while True:
-            if self.scoring == "accuracy":
+            if self.config.scoring == "accuracy":
                 best_model_index = np.argmax(self.history[self.monitor])
                 break
-            if self.scoring == "loss":
+            if self.config.scoring == "loss":
                 best_model_index = np.argmin(self.history[self.monitor])
                 break
 
@@ -90,6 +90,11 @@ class ModelTrainer:
             results[f"val_{metric}"] = self.history[f"val_{metric}"][best_model_index]
 
         num_epochs = len(self.history["loss"])
+
+        # In ra các kết quả đánh giá
+        print("========KET QUA MO HINH TOT NHAT================")
+        for key, value in results.items():
+            print(f"{key}: {value}")
 
         # Ghi vào file
         content = "SCORING\n"
