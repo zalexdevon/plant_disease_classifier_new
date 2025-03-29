@@ -174,6 +174,8 @@ cython_debug/
 # Other 
 data/
 artifacts/
+research/
+
+
 Data.zip
 artifacts.zip
-research/
