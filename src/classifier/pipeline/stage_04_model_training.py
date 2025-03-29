@@ -18,11 +18,20 @@ class ModelTrainerPipeline:
         config = ConfigurationManager()
         model_trainer_config = config.get_model_trainer_config()
         model_trainer = ModelTrainer(config=model_trainer_config)
-        model_trainer.load_data_to_train()
-        model_trainer.load_callbacks()
-        model_trainer.load_model()
-        model_trainer.train()
-        model_trainer.save_model()
+
+        try:
+            model_trainer.load_data_to_train()
+            print("\n===== Load data thành công ====== \n")
+            model_trainer.load_callbacks()
+            print("\n===== Load callbacks thành công ====== \n")
+            model_trainer.load_model()
+            print("\n===== Load model thành công ====== \n")
+            model_trainer.train()
+            print("\n===== Train thành công ====== \n")
+            model_trainer.save_model()
+            print("\n===== Save model thành công ====== \n")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":
