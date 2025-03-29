@@ -1,7 +1,7 @@
 import pandas as pd
 import os
-from src.classifier.entity.config_entity import ModelTrainerConfig
-from src.classifier.Mylib import myfuncs
+from classifier.entity.config_entity import ModelTrainerConfig
+from classifier.Mylib import myfuncs
 import numpy as np
 import random
 import time
