@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 __version__ = "0.0.0"
 
-REPO_NAME = "plant_disease_classifier"  # tên của github repo
+REPO_NAME = "plant_disease_classifier_new"  # tên của github repo
 AUTHOR_USER_NAME = "zalexdevon"  # tên của tài khoản github
 SRC_REPO = "classifier"  # tên thư mục chứa source code
 AUTHOR_EMAIL = "trantamch112358@gmail.com"  # email đăng kí github
