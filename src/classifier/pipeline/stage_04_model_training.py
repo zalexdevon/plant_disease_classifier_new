@@ -1,9 +1,9 @@
-from src.classifier.config.configuration import ConfigurationManager
-from src.classifier.components.model_trainer import (
+from classifier.config.configuration import ConfigurationManager
+from classifier.components.model_trainer import (
     ModelTrainer,
 )
-from src.classifier import logger
-from src.classifier.components.monitor_plotter import (
+from classifier import logger
+from classifier.components.monitor_plotter import (
     MonitorPlotter,
 )
 
