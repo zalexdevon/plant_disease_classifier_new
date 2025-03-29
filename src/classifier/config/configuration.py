@@ -16,8 +16,8 @@ class ConfigurationManager:
         params_filepath=PARAMS_FILE_PATH,
     ):
 
-        self.config = read_yaml(Path(config_filepath))
-        self.params = read_yaml(Path(params_filepath))
+        self.config = read_yaml(config_filepath)
+        self.params = read_yaml(params_filepath)
 
         create_directories([self.config.artifacts_root])
 
