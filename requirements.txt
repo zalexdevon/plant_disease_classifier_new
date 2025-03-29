@@ -17,4 +17,4 @@ seaborn
 xgboost
 lightgbm 
 imbalanced-learn
-# -e .
+-e .
