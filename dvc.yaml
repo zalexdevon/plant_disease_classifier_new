@@ -1,0 +1,13 @@
+stages: 
+      model_trainer:
+            cmd: python src/classifier/pipeline/stage_04_model_training.py
+            deps:
+                  - artifacts/data_ingestion
+            params:
+                  - model_name 
+
+      model_evaluation:
+            cmd: python src/classifier/pipeline/stage_05_model_evaluation.py
+            params:
+                  - evaluated_data_transformation
+                  - evaluated_model_name
