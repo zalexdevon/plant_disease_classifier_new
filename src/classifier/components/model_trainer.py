@@ -61,7 +61,7 @@ class ModelTrainer:
             self.train_ds,
             epochs=self.config.epochs,
             batch_size=self.config.batch_size,
-            verbose=1,  # Tắt verbose của keras thay bằng tqdm
+            verbose=1,
             validation_data=self.val_ds,
             callbacks=self.callbacks,
         ).history
@@ -84,6 +84,11 @@ class ModelTrainer:
             "loss": self.history["loss"][best_model_index],
             "val_loss": self.history["val_loss"][best_model_index],
         }
+
+        # TODO: d
+        print(self.history["loss"])
+        print(self.history["accuracy"])
+        # d
 
         for metric in self.config.metrics:
             results[metric] = self.history[metric][best_model_index]
