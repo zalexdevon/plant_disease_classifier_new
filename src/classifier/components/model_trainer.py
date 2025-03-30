@@ -143,7 +143,6 @@ class ModelTrainer:
         epochs = range(1, num_epochs + 1)
         epochs = [str(i) for i in epochs]
 
-        ## Vẽ loss
         metrics_and_loss = self.config.metrics + ["loss"]
 
         for item in metrics_and_loss:

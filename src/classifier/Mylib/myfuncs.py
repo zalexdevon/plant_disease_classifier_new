@@ -28,15 +28,23 @@ from io import StringIO
 import sys
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import (
-    RandomFlip,
-    RandomRotation,
-    RandomZoom,
     Rescaling,
     Conv2D,
     MaxPooling2D,
     Flatten,
     Dense,
 )
+from keras_cv.layers import (
+    RandomFlip,
+    RandomRotation,
+    RandomZoom,
+    RandomBrightness,
+    RandomGaussianBlur,
+    RandomContrast,
+    RandomHue,
+    RandomSaturation,
+)
+
 
 from tensorflow.keras.optimizers import RMSprop
 
