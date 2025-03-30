@@ -91,7 +91,7 @@ class MonitorPlotter:
             ),
             yaxis=dict(
                 title="",
-                range=[0, self.config.max_val_value + self.config.dtick_y_value * 10],
+                range=[0, self.config.max_val_value + self.config.dtick_y_value],
                 dtick=self.config.dtick_y_value,
             ),
             showlegend=False,
