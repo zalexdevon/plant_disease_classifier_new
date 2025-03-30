@@ -35,16 +35,16 @@ from tensorflow.keras.layers import (
     Dense,
 )
 
-from keras_cv.layers import (
-    RandomFlip,
-    RandomRotation,
-    RandomZoom,
-    RandomBrightness,
-    RandomGaussianBlur,
-    RandomContrast,
-    RandomHue,
-    RandomSaturation,
-)
+# from keras_cv.layers import (
+#     RandomFlip,
+#     RandomRotation,
+#     RandomZoom,
+#     RandomBrightness,
+#     RandomGaussianBlur,
+#     RandomContrast,
+#     RandomHue,
+#     RandomSaturation,
+# )
 
 
 from tensorflow.keras.optimizers import RMSprop
@@ -884,4 +884,4 @@ def do_ast_literal_eval_advanced_7(text: str):
         return ast.literal_eval(text)
 
     items = text.strip().split(";")
-    return (ast.literal_eval(item) for item in items)
+    return (ast.literal_eval(item.strip()) for item in items)
