@@ -7,8 +7,8 @@
         <mxCell id="liqCc_mYewOzT0pbjEaC-1" value="https://www.notion.so/ct-1abb2a4ed31f80f08a3af53afe8b64d7?pvs=4" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="-31" y="46" width="828" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="8vPAx5M9qXYKdXPnr-XK-2" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;CONVNET_8&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" vertex="1" parent="1">
-          <mxGeometry x="-347" y="155" width="516" height="688" as="geometry">
+        <mxCell id="8vPAx5M9qXYKdXPnr-XK-2" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;CONVNET_10&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" vertex="1" parent="1">
+          <mxGeometry x="852" y="168" width="516" height="688" as="geometry">
             <mxRectangle x="179" y="145" width="130" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
