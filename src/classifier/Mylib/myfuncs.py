@@ -825,14 +825,6 @@ def get_object_from_string_4(text: str):
     param_parts = [item.strip() for item in param_parts]
     keys = [item.split("=")[0].strip() for item in param_parts]
 
-    # TODO:d
-    print("=====")
-    for item in param_parts:
-        print(item.strip().split("=")[1])
-        print(ast.literal_eval(item.split("=")[1].strip()))
-    print("=====")
-    # d
-
     values = [
         ast.literal_eval(item.strip().split("=")[1].strip()) for item in param_parts
     ]
