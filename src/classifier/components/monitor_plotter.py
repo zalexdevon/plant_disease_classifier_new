@@ -56,7 +56,7 @@ class MonitorPlotter:
                 xref="x",
                 yref="y",
                 showarrow=False,
-                font=dict(family="Consolas", size=7, color="red"),
+                font=dict(family="Consolas", size=10, color="red"),
                 ax=0,
                 align="left",
                 yanchor="bottom",
