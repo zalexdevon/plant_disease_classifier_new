@@ -67,7 +67,7 @@ class ModelTrainer:
             callbacks=self.callbacks,
         ).history
 
-    def save_model(self):
+    def find_index_for_best_model(self):
         # Tìm index ứng với best model
         best_model_index = None
         while True:
@@ -80,6 +80,24 @@ class ModelTrainer:
 
             break
 
+        return best_model_index
+
+    def find_scoring_val_scoring_for_best_model(self, results):
+        self.best_model_train_score = results[self.config.scoring]
+        self.best_model_val_score = results["val_" + self.config.scoring]
+
+        while True:
+            if self.config.scoring == "accuracy":
+                self.best_model_train_score = self.best_model_train_score * 100
+                self.best_model_val_score = self.best_model_val_score * 100
+
+                break
+
+            break
+
+    def save_model(self):
+        best_model_index = self.find_index_for_best_model()
+
         # Tìm các chỉ số đánh giá tương ứng
         results = {
             "loss": self.history["loss"][best_model_index],
@@ -89,9 +107,6 @@ class ModelTrainer:
         for metric in self.config.metrics:
             results[metric] = self.history[metric][best_model_index]
             results[f"val_{metric}"] = self.history[f"val_{metric}"][best_model_index]
-
-        self.best_model_train_score = results[self.config.scoring]
-        self.best_model_val_score = results["val_" + self.config.scoring]
 
         num_epochs = len(self.history["loss"])
 
