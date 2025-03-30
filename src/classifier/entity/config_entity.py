@@ -27,7 +27,6 @@ class ModelTrainerConfig:
     optimizer: RMSprop
     loss: str
     metrics: list
-    model_name: str
 
     # common params
     scoring: str

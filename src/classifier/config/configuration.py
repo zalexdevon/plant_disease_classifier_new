@@ -62,7 +62,6 @@ class ConfigurationManager:
             optimizer=optimizer,
             loss=params.loss,
             metrics=params.metrics,
-            model_name=params.model_name,
             # common params
             scoring=self.params.scoring,
             image_size=self.params.image_size,
