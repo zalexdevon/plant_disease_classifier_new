@@ -840,7 +840,8 @@ def get_object_from_string_4(text: str):
     keys = [item.split("=")[0].strip() for item in param_parts]
 
     values = [
-        ast.literal_eval(item.strip().split("=")[1].strip()) for item in param_parts
+        do_ast_literal_eval_advanced_7(item.strip().split("=")[1].strip())
+        for item in param_parts
     ]
 
     params = dict(zip(keys, values))
@@ -872,3 +873,15 @@ def get_object_from_string_using_eval_6(text: str, module):
 
     # Tạo đối tượng bằng eval (không khuyến khích nếu có dữ liệu không đáng tin cậy)
     return eval(f"class_name({params})")
+
+
+def do_ast_literal_eval_advanced_7(text: str):
+    """Kế thừa hàm ast.literal_eval() nhưng xử lí thêm trường hợp sau
+
+    Tuple dạng (1.0 ; 2.0), các phần tử cách nhau bởi dấu ; thay vì dấu ,
+    """
+    if ";" not in text:
+        return ast.literal_eval(text)
+
+    items = text.strip().split(";")
+    return (ast.literal_eval(item) for item in items)
