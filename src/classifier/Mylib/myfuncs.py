@@ -826,6 +826,7 @@ def get_object_from_string_4(text: str):
 
     # TODO: d
     print("Class = " + class_name)
+    print("params = " + params)
     # d
 
     object_class = globals()[class_name]
