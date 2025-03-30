@@ -31,7 +31,8 @@ class ModelTrainerPipeline:
             model_trainer.save_model()
             print("\n===== Save model thành công ====== \n")
 
-            monitor_plotter = MonitorPlotter()
+            monitor_plotter_config = config.get_monitor_plot_config()
+            monitor_plotter = MonitorPlotter(monitor_plotter_config)
             monitor_plotter.plot(model_trainer.list_monitor_components)
             print("\n===== Vẽ kết quả các lần chạy model thành công ====== \n")
 
