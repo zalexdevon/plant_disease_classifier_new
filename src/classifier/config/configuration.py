@@ -57,7 +57,7 @@ class ConfigurationManager:
             model_name=params.model_name,
             epochs=params.epochs,
             callbacks=list_callbacks,
-            layers_in_string=params.layers_in_string,
+            layers_in_string=params.layers,
             layers=list_layers,
             optimizer=optimizer,
             loss=params.loss,
