@@ -883,5 +883,5 @@ def do_ast_literal_eval_advanced_7(text: str):
     if ";" not in text:
         return ast.literal_eval(text)
 
-    items = text.strip().split(";")
-    return (ast.literal_eval(item.strip()) for item in items)
+    items = text.strip(r"()").split(";")
+    return tuple(ast.literal_eval(item.strip()) for item in items)
