@@ -9,6 +9,7 @@ from tqdm.keras import TqdmCallback
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.callbacks import Callback, ModelCheckpoint, EarlyStopping
+from keras.layers import Dense
 
 
 class ModelTrainer:
@@ -38,8 +39,8 @@ class ModelTrainer:
         )(inputs)
 
         first_layer = self.config.layers[0]
-        middle_layers = self.config.layers[1:-1]
-        last_layer = self.config.layers[-1]
+        middle_layers = self.config.layers[1:]
+        last_layer = Dense(units=len(self.config.class_names), activation="softmax")
 
         x = first_layer(resize_layer)
 
@@ -85,16 +86,12 @@ class ModelTrainer:
             "val_loss": self.history["val_loss"][best_model_index],
         }
 
-        # TODO: d
-        print(f"loss: {self.history['loss']}")
-        print(f"accuracy: {self.history['accuracy']}")
-        print(f"val_loss: {self.history['val_loss']}")
-        print(f"val_accuracy: {self.history['val_accuracy']}")
-        # d
-
         for metric in self.config.metrics:
             results[metric] = self.history[metric][best_model_index]
             results[f"val_{metric}"] = self.history[f"val_{metric}"][best_model_index]
+
+        self.best_model_train_score = results[self.config.scoring]
+        self.best_model_val_score = results["val_" + self.config.scoring]
 
         num_epochs = len(self.history["loss"])
 
@@ -119,7 +116,6 @@ class ModelTrainer:
         keras.utils.plot_model(self.model, self.config.structure_path, show_shapes=True)
 
     def save_list_monitor_components(self):
-
         if self.config.is_first_time == "f":
 
             self.list_monitor_components = myfuncs.load_python_object(
@@ -131,9 +127,9 @@ class ModelTrainer:
 
         self.list_monitor_components += [
             (
-                self.monitor_desc,
-                self.train_score_follow_best_val,
-                self.best_val_score,
+                self.config.model_name,
+                self.best_model_train_score,
+                self.best_model_val_score,
             )
         ]
 

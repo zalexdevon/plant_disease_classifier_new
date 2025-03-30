@@ -6,7 +6,7 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_2
+      model_name: CONVNET_3
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=10, min_delta=0.01)
@@ -31,7 +31,6 @@ model_trainer:
             # Classifier
             - Flatten()
             - Dense(units=  64, activation='relu')
-            - Dense(units=3, activation='softmax')
 
       optimizer: RMSprop()
       loss: sparse_categorical_crossentropy
@@ -44,7 +43,7 @@ evaluated_model_name: XGB_1
 
 # MONITOR PLOT
 monitor_plotter:
-      monitor_plot_html_path: "artifacts/monitor_plot.html"
+      monitor_plot_html_path: "artifacts/model_trainer/monitor_plot.html"
       target_val_value: 97
       max_val_value: 100
       dtick_y_value: 5

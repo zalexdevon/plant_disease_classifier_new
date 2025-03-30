@@ -12,8 +12,7 @@ class MonitorPlotter:
         self.config = config
 
     def plot(self, monitor):
-
-        monitor_descs = [item[0] for item in monitor]
+        model_name = [item[0] for item in monitor]
         train_scores = [item[1] for item in monitor]
         val_scores = [item[2] for item in monitor]
 
@@ -48,12 +47,12 @@ class MonitorPlotter:
         )
 
         for i in range(len(x_values)):
-            text = monitor_descs[i]
+            text = model_name[i]
 
             fig.add_annotation(
                 text=text,
                 x=x_values[i],
-                y=self.config.max_val_value,
+                y=0,
                 xref="x",
                 yref="y",
                 showarrow=False,

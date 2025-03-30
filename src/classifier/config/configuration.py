@@ -37,25 +37,32 @@ class ConfigurationManager:
             myfuncs.get_object_from_string_4(layer) for layer in params.layers
         ]
 
+        class_names = myfuncs.load_python_object(config.class_names_path)
+
         optimizer = myfuncs.get_object_from_string_4(params.optimizer)
 
         model_trainer_config = ModelTrainerConfig(
             # config
             train_ds_path=config.train_ds_path,
             val_ds_path=config.val_ds_path,
+            class_names=config.class_names,
             root_dir=config.root_dir,
             best_model_path=config.best_model_path,
             results_path=config.results_path,
             structure_path=config.structure_path,
+            detailed_structure_path=config.detailed_structure_path,
+            list_monitor_components_path=config.list_monitor_components_path,
             # params
             is_first_time=params.is_first_time,
             model_name=params.model_name,
             epochs=params.epochs,
             callbacks=list_callbacks,
+            layers_in_string=params.layers_in_string,
             layers=list_layers,
             optimizer=optimizer,
             loss=params.loss,
             metrics=params.metrics,
+            model_name=params.model_name,
             # common params
             scoring=self.params.scoring,
             image_size=self.params.image_size,

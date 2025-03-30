@@ -4,12 +4,15 @@ model_trainer:
       # Dữ liệu
       train_ds_path: artifacts/data_ingestion/train_ds
       val_ds_path: artifacts/data_ingestion/val_ds
+      class_names_path: artifacts/data_ingestion/class_names.pkl
       
       # Model
       root_dir: artifacts/model_trainer/${T}
       best_model_path: artifacts/model_trainer/${T}/best_model.keras
       results_path: artifacts/model_trainer/${T}/results.txt
       structure_path: artifacts/model_trainer/${T}/structure.png
+      detailed_structure_path: artifacts/model_trainer/${T}/detailed_structure.png
+      list_monitor_components_path: artifacts/model_trainer/list_monitor_components.pkl
 
 
 model_evaluation:

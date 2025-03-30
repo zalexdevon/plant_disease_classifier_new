@@ -8,20 +8,26 @@ class ModelTrainerConfig:
     # config
     train_ds_path: Path
     val_ds_path: Path
+    class_names: list
+
     root_dir: Path
     best_model_path: Path
     results_path: Path
     structure_path: Path
+    detailed_structure_path: Path
+    list_monitor_components_path: Path
 
     # params
     is_first_time: str
     model_name: str
     epochs: int
     callbacks: list
+    layers_in_string: str
     layers: list
     optimizer: RMSprop
     loss: str
     metrics: list
+    model_name: str
 
     # common params
     scoring: str
