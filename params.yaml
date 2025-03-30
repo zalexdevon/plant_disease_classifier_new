@@ -6,7 +6,7 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_14
+      model_name: CONVNET_15
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=1, min_delta=1)
@@ -27,11 +27,7 @@ model_trainer:
             # Convnet 
             - Conv2D(filters=32, kernel_size=3, activation='relu')
             - MaxPooling2D(pool_size=2)
-            - Conv2D(filters=64, kernel_size=3, activation='relu')
-            - MaxPooling2D(pool_size=2)
-            - Conv2D(filters=128, kernel_size=3, activation='relu')
-            - MaxPooling2D(pool_size=2)
-            - Conv2D(filters=256, kernel_size=3, activation='relu')
+            
 
             # Classifier
             - Flatten()

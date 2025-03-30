@@ -34,7 +34,12 @@ class ModelTrainer:
                 monitor=self.monitor,
                 save_best_only=True,
             ),
-            TensorBoard(log_dir=self.config.root_logs_dir, histogram_freq=1),
+            TensorBoard(
+                log_dir=self.config.root_logs_dir,
+                histogram_freq=1,
+                write_graph=True,  # Đảm bảo ghi đồ thị
+                write_images=True,
+            ),
         ] + self.config.callbacks
 
     def load_model(self):
