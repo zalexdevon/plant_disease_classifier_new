@@ -100,3 +100,6 @@ class MonitorPlotter:
         fig.write_html(
             self.config.monitor_plot_html_path, config={"displayModeBar": False}
         )
+
+        print(f"\n===== Kết quả các lần chạy model ====== \n")
+        fig.show()
