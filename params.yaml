@@ -5,7 +5,7 @@ batch_size: 32
 
 # MODEL TRAINING
 model_trainer: 
-      is_first_time: f # t or f
+      is_first_time: t # t or f
       model_name: CONVNET_3
       epochs: 50
       callbacks: 
