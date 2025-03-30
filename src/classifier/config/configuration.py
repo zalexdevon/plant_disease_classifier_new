@@ -46,6 +46,8 @@ class ConfigurationManager:
             train_ds_path=config.train_ds_path,
             val_ds_path=config.val_ds_path,
             class_names=class_names,
+            root_dir=config.root_dir,
+            root_logs_dir=config.root_logs_dir,
             best_model_path=config.best_model_path,
             results_path=config.results_path,
             structure_path=config.structure_path,
