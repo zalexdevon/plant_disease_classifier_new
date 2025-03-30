@@ -17,9 +17,7 @@ model_trainer:
             - RandomZoom(height_factor=0.2)
             - RandomBrightness(factor=0.2)
             - RandomGaussianBlur(kernel_size=3, factor=(0.0; 1.0))
-            - RandomContrast(factor=0.2,value_range=(0.8; 1.2))
-            - RandomHue(factor=0.08) 
-            - RandomSaturation(factor=0.3)
+
 
             # rescale 
             - Rescaling(scale = 0.00392) # 1 / 255
