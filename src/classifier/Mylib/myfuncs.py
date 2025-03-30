@@ -34,16 +34,17 @@ from tensorflow.keras.layers import (
     Flatten,
     Dense,
 )
-from keras_cv.layers import (
-    RandomFlip,
-    RandomRotation,
-    RandomZoom,
-    RandomBrightness,
-    RandomGaussianBlur,
-    RandomContrast,
-    RandomHue,
-    RandomSaturation,
-)
+
+# from keras_cv.layers import (
+#     RandomFlip,
+#     RandomRotation,
+#     RandomZoom,
+#     RandomBrightness,
+#     RandomGaussianBlur,
+#     RandomContrast,
+#     RandomHue,
+#     RandomSaturation,
+# )
 
 
 from tensorflow.keras.optimizers import RMSprop
