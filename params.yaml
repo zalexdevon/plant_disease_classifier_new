@@ -6,7 +6,7 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_12
+      model_name: CONVNET_13
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=1, min_delta=1)
@@ -49,6 +49,7 @@ evaluated_model_name: XGB_1
 # MONITOR PLOT
 monitor_plotter:
       monitor_plot_html_path: "artifacts/model_trainer/monitor_plot.html"
+      monitor_plot_fig_path: "artifacts/model_trainer/monitor_plot_fig.pkl"
       target_val_value: 99.9
       max_val_value: 100
       dtick_y_value: 5

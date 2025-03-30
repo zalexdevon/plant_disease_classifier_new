@@ -101,5 +101,4 @@ class MonitorPlotter:
             self.config.monitor_plot_html_path, config={"displayModeBar": False}
         )
 
-        print(f"\n===== Kết quả các lần chạy model ====== \n")
-        fig.show()
+        myfuncs.save_python_object(self.config.monitor_plot_fig_path, fig)

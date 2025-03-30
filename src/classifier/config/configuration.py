@@ -91,6 +91,7 @@ class ConfigurationManager:
 
         obj = MonitorPlotterConfig(
             monitor_plot_html_path=config.monitor_plot_html_path,
+            monitor_plot_fig_path=config.monitor_plot_fig_path,
             target_val_value=config.target_val_value,
             max_val_value=config.max_val_value,
             dtick_y_value=config.dtick_y_value,

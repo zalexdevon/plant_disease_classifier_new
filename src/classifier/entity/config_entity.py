@@ -49,6 +49,7 @@ class ModelEvaluationConfig:
 @dataclass(frozen=True)
 class MonitorPlotterConfig:
     monitor_plot_html_path: Path
+    monitor_plot_fig_path: Path
     target_val_value: float
     max_val_value: float
     dtick_y_value: float
