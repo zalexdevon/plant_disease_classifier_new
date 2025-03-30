@@ -9,7 +9,7 @@ model_trainer:
       model_name: CONVNET_3
       epochs: 50
       callbacks: 
-            - EarlyStopping(monitor='val_accuracy', patience=10, min_delta=0.01)
+            - EarlyStopping(monitor='val_accuracy', patience=3, min_delta=1)
       layers: 
             # data augmentation 
             - RandomFlip(mode='horizontal_and_vertical')
