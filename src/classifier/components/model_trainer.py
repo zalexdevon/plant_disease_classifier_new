@@ -83,17 +83,19 @@ class ModelTrainer:
         return best_model_index
 
     def find_scoring_val_scoring_for_best_model(self, results):
-        self.best_model_train_score = results[self.config.scoring]
-        self.best_model_val_score = results["val_" + self.config.scoring]
+        best_model_train_score = results[self.config.scoring]
+        best_model_val_score = results["val_" + self.config.scoring]
 
         while True:
             if self.config.scoring == "accuracy":
-                self.best_model_train_score = self.best_model_train_score * 100
-                self.best_model_val_score = self.best_model_val_score * 100
+                best_model_train_score = best_model_train_score * 100
+                best_model_val_score = best_model_val_score * 100
 
                 break
 
             break
+
+        return best_model_train_score, best_model_val_score
 
     def save_model(self):
         best_model_index = self.find_index_for_best_model()
@@ -109,6 +111,10 @@ class ModelTrainer:
             results[f"val_{metric}"] = self.history[f"val_{metric}"][best_model_index]
 
         num_epochs = len(self.history["loss"])
+
+        self.best_model_train_score, self.best_model_val_score = (
+            self.find_scoring_val_scoring_for_best_model(results)
+        )
 
         # In ra các kết quả đánh giá
         print("========KET QUA MO HINH TOT NHAT================")
