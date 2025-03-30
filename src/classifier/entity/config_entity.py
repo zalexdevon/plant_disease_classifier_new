@@ -16,7 +16,6 @@ class ModelTrainerConfig:
     results_path: Path
     structure_path: Path
     detailed_structure_path: Path
-    list_monitor_components_path: Path
 
     # params
     is_first_time: str

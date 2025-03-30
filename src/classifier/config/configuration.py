@@ -51,7 +51,6 @@ class ConfigurationManager:
             best_model_path=config.best_model_path,
             results_path=config.results_path,
             structure_path=config.structure_path,
-            detailed_structure_path=config.detailed_structure_path,
             list_monitor_components_path=config.list_monitor_components_path,
             # params
             is_first_time=params.is_first_time,
