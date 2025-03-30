@@ -821,7 +821,7 @@ def get_object_from_string_4(text: str):
     """
     # Tách tên lớp và tham số
     class_name, params = text.split("(", 1)
-    params = params.rstrip(")")
+    params = params[:-1]
 
     object_class = globals()[class_name]
 
