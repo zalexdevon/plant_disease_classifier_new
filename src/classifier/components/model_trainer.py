@@ -15,9 +15,11 @@ from tensorflow.keras.callbacks import (
     TensorBoard,
 )
 from keras.layers import Dense
+import matplotlib.pyplot as plt
 
 
 class ModelTrainer:
+
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
 
@@ -137,7 +139,25 @@ class ModelTrainer:
             print(f"{key}: {value}")
         print(f"Số epochs đã chạy: {num_epochs} / {self.config.epochs}")
 
-        # Ghi vào file
+        # Lưu các biểu đồ per epoch cho từng chỉ số
+        epochs = range(1, num_epochs + 1)
+        epochs = [str(i) for i in epochs]
+
+        ## Vẽ loss
+        metrics_and_loss = self.config.metrics + ["loss"]
+
+        for item in metrics_and_loss:
+            plt.plot(epochs, self.history[item], color="gray")
+            plt.plot(epochs, self.history["val_" + item], color="blue")
+            plt.savefig(
+                os.path.join(self.config.root_dir, item + "_per_epoch.png"),
+                dpi=None,
+                bbox_inches="tight",
+                format=None,
+            )
+            plt.clf()
+
+        # Ghi kết quả các chỉ số vào file results.txt
         content = "SCORING\n"
 
         for key, value in results.items():
