@@ -27,7 +27,7 @@ class ConfigurationManager:
         config = self.config.model_trainer
         params = self.params.model_trainer
 
-        create_directories([config.root_dir])
+        create_directories([config.root_dir, config.root_logs_dir])
 
         list_callbacks = [
             myfuncs.get_object_from_string_4(callback) for callback in params.callbacks
@@ -46,7 +46,6 @@ class ConfigurationManager:
             train_ds_path=config.train_ds_path,
             val_ds_path=config.val_ds_path,
             class_names=class_names,
-            root_dir=config.root_dir,
             best_model_path=config.best_model_path,
             results_path=config.results_path,
             structure_path=config.structure_path,

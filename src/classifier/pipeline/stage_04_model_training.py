@@ -36,9 +36,6 @@ class ModelTrainerPipeline:
             monitor_plotter_config = config.get_monitor_plot_config()
             monitor_plotter = MonitorPlotter(monitor_plotter_config)
             monitor_plotter.plot(model_trainer.list_monitor_components)
-            print(
-                f"\n===== Vẽ kết quả các lần chạy model thành công vào file {monitor_plotter.config.monitor_plot_html_path} ====== \n"
-            )
 
         except Exception as e:
             print(f"An error occurred: {e}")

@@ -11,6 +11,7 @@ class ModelTrainerConfig:
     class_names: list
 
     root_dir: Path
+    root_logs_dir: Path
     best_model_path: Path
     results_path: Path
     structure_path: Path

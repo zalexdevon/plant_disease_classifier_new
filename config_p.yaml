@@ -8,11 +8,13 @@ model_trainer:
       
       # Model
       root_dir: artifacts/model_trainer/${T}
+      root_logs_dir: artifacts/logs/${T}
       best_model_path: artifacts/model_trainer/${T}/best_model.keras
       results_path: artifacts/model_trainer/${T}/results.txt
       structure_path: artifacts/model_trainer/${T}/structure.png
       detailed_structure_path: artifacts/model_trainer/${T}/detailed_structure.png
       list_monitor_components_path: artifacts/model_trainer/list_monitor_components.pkl
+
 
 
 model_evaluation:

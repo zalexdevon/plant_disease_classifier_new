@@ -8,7 +8,12 @@ import time
 from tqdm.keras import TqdmCallback
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.callbacks import Callback, ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import (
+    Callback,
+    ModelCheckpoint,
+    EarlyStopping,
+    TensorBoard,
+)
 from keras.layers import Dense
 
 
@@ -29,6 +34,7 @@ class ModelTrainer:
                 monitor=self.monitor,
                 save_best_only=True,
             ),
+            TensorBoard(log_dir=self.config.root_logs_dir, histogram_freq=1),
         ] + self.config.callbacks
 
     def load_model(self):
@@ -58,6 +64,8 @@ class ModelTrainer:
         )
 
     def train(self):
+        print("========TIEN HANH TRAIN MODEL !!!!!!================")
+
         self.history = self.model.fit(
             self.train_ds,
             epochs=self.config.epochs,
@@ -66,6 +74,8 @@ class ModelTrainer:
             validation_data=self.val_ds,
             callbacks=self.callbacks,
         ).history
+
+        print("========KET THUC TRAIN MODEL !!!!!!================")
 
     def find_index_for_best_model(self):
         # Tìm index ứng với best model
