@@ -1,11 +1,16 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" version="26.0.16">
-  <diagram name="Trang-1" id="9CXXCEQQvz_99VvId4QO">
-    <mxGraphModel dx="2003" dy="511" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" version="26.1.3">
+  <diagram name="fine tune models" id="9CXXCEQQvz_99VvId4QO">
+    <mxGraphModel dx="1861" dy="446" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="liqCc_mYewOzT0pbjEaC-1" value="https://www.notion.so/ct-1abb2a4ed31f80f08a3af53afe8b64d7?pvs=4" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="liqCc_mYewOzT0pbjEaC-1" value="https://www.notion.so/ct-1abb2a4ed31f80f08a3af53afe8b64d7?pvs=4" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="-31" y="46" width="828" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="8vPAx5M9qXYKdXPnr-XK-2" value="Vertical Container" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="135" width="516" height="375" as="geometry">
+            <mxRectangle x="179" y="145" width="130" height="26" as="alternateBounds" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
