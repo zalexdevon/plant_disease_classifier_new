@@ -6,7 +6,7 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: t # t or f
-      model_name: CONVNET_7
+      model_name: CONVNET_8
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=3, min_delta=1)

@@ -52,7 +52,7 @@ class MonitorPlotter:
             fig.add_annotation(
                 text=text,
                 x=x_values[i],
-                y=0,
+                y=self.config.max_val_value,
                 xref="x",
                 yref="y",
                 showarrow=False,
