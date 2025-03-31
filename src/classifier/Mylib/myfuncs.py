@@ -36,7 +36,7 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.optimizers import RMSprop
 from typing import Union
-from myclasses import (
+from classifier.Mylib.myclasses import (
     ConvNetBlock_XceptionVersion,
     ConvNetBlock_Advanced,
     ConvNetBlock,
