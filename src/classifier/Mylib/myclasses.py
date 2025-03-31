@@ -47,6 +47,9 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         self.filters = filters
 
     def build(self, input_shape):
+        print(
+            "============== Build class ConvNetBlock_XceptionVersion ================="
+        )
         super.build(input_shape)
 
     def call(self, x):
