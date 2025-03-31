@@ -935,7 +935,7 @@ def plot_many_lines_on_1plane_7(
         color_discrete_map=dict(zip(value_vars, color_value_vars)),
     )
 
-    fig.show()
+    # fig.show()
 
     return fig
 
@@ -984,11 +984,90 @@ def plot_grouped_bar_chart_8(df: pd.DataFrame, id_var, value_vars):
         barmode="group",  # Hiển thị dạng cột nhóm
     )
 
-    fig.show()
+    # fig.show()
 
     return fig
 
 
 @ensure_annotations
 def plot_radar_chart_9(categories: list, values: list):
-    pass
+    """Vẽ radar chart
+
+    Examples:
+    ```python
+    categories = ['Kỹ năng A', 'Kỹ năng B', 'Kỹ năng C', 'Kỹ năng D', 'Kỹ năng E']
+    values = [80, 90, 70, 85, 60]
+    ```
+
+    Returns:
+        _type_: Đối tượng **fig**
+    """
+
+    values += values[:1]
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatterpolar(
+            r=values,
+            theta=categories,
+            fill="toself",
+        )
+    )
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True, range=[0, 100]
+            )  # Hiển thị trục và đặt giới hạn
+        ),
+    )
+
+    fig.show()
+
+    return fig
+
+
+def plot_full100percent_area_chart(df: pd.DataFrame, time_col, group, value):
+    """Vẽ biểu đồ full 100% area chart
+
+    Examples:
+    ```python
+    data = pd.DataFrame({
+        "Thời gian": ["Q1", "Q2", "Q3", "Q4"] * 3,
+        "Nhóm": ["A"] * 4 + ["B"] * 4 + ["C"] * 4,
+        "Giá trị": np.random.randint(10, 100, 12)
+    })
+    ```
+
+    Vẽ biểu đồ miền thể hiện tỉ trọng của từng **Nhóm** qua từng quý (Q1, Q2, ...)
+
+    ```python
+    plot_full100percent_area_chart(data, "Thời gian", "Nhóm", "Giá trị")
+    ```
+
+
+    Args:
+        df (pd.DataFrame): _description_
+        time_col (_type_): Tên cột ở trục x, thông thường là thời gian
+        group (_type_): Tên cột chứa category được chia ra trong biểu đồ
+        value (_type_): Tên cột giá trị
+
+    Returns:
+        _type_: Đối tượng **fig**
+    """
+
+    # Tính tổng ứng với mỗi điểm trục X
+    data_grouped = df.groupby(time_col)[value].transform("sum")
+
+    # Tính tỷ lệ phần trăm cho từng nhóm
+    df["percent"] = (df[value] / data_grouped) * 100
+
+    # Vẽ Full 100% Area Chart
+    fig = px.area(
+        df,
+        x=time_col,
+        y="percent",
+        color=group,
+    )
+
+    fig.show()
+
+    return fig
