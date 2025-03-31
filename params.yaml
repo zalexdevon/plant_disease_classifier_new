@@ -19,7 +19,7 @@ model_trainer:
             - RandomGaussianBlur(kernel_size=3, factor=(0.0; 1.0))
             - RandomContrast(factor=0.2,value_range=(0.8; 1.2))
             - RandomHue(factor=0.08, value_range=(0.8; 1.2))
-            - RandomSaturation(factor=0.3, value_range=(0.8; 1.2))
+            - RandomSaturation(factor=0.3)
 
 
             # rescale 
