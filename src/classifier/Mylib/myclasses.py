@@ -46,7 +46,8 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         super().__init__()
         self.filters = filters
 
-        print("===========Khởi tạo thành công ============")
+    def build(self, input_shape):
+        super.build(input_shape)
 
     def call(self, x):
         residual = x
