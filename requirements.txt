@@ -1,5 +1,5 @@
-tensorflow
-keras-cv
+tensorflow==2.18.0
+keras-cv==0.9.0
 pandas
 numpy
 dvc

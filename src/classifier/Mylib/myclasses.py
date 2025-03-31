@@ -25,6 +25,7 @@ import tensorflow as tf
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow import keras
+import keras_cv
 
 
 class ConvNetBlock_XceptionVersion(layers.Layer):
@@ -33,7 +34,7 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
     - SeparableConv2D
     - MaxPooling2D
 
-    Đi kèm là sự ết hợp giữa residual connections, batch normalization và  depthwise separable convolutions (lớp SeparableConv2D)
+    Đi kèm là sự kết hợp giữa residual connections, batch normalization và  depthwise separable convolutions (lớp SeparableConv2D)
 
     Attributes:
         filters (_type_): số lượng filters trong lớp SeparableConv2D
@@ -151,11 +152,11 @@ class ImageDataPositionAugmentation(layers.Layer):
     - RandomZoom
 
     Attributes:
-        rotation_factor (float): Tham số cho lớp RandomRotation
-        zoom_factor (float): Tham số cho lớp RandomZoom
+        rotation_factor (float): Tham số cho lớp RandomRotation. Default to 0.2
+        zoom_factor (float): Tham số cho lớp RandomZoom. Default to 0.2
     """
 
-    def __init__(self, rotation_factor, zoom_factor):
+    def __init__(self, rotation_factor=0.2, zoom_factor=0.2):
         super(ImageDataPositionAugmentation, self).__init__()
         self.rotation_factor = rotation_factor
         self.zoom_factor = zoom_factor
@@ -177,19 +178,39 @@ class ImageDataColorAugmentation(layers.Layer):
     - RandomSaturation
 
     Attributes:
-        rotation_factor (float): Tham số cho lớp RandomRotation
-        zoom_factor (float): Tham số cho lớp RandomZoom
+        brightness_factor (float, optional): factor cho RandomBrightness. Defaults to 0.2.
+        contrast_factor (float, optional): factor cho RandomContrast. Defaults to 0.2.
+        hue_factor (float, optional): factor cho RandomHue. Defaults to 0.2.
+        saturation_factor (float, optional): factor cho RandomSaturation. Defaults to 0.2.
     """
 
-    def __init__(self, rotation_factor=0.2, zoom_factor=0.2):
+    def __init__(
+        self,
+        brightness_factor=0.2,
+        contrast_factor=0.2,
+        hue_factor=0.2,
+        saturation_factor=0.2,
+    ):
         super(ImageDataColorAugmentation, self).__init__()
-        self.rotation_factor = rotation_factor
-        self.zoom_factor = zoom_factor
+        self.brightness_factor = brightness_factor
+        self.contrast_factor = contrast_factor
+        self.hue_factor = hue_factor
+        self.saturation_factor = saturation_factor
 
     def call(self, x):
-        x = layers.RandomFlip(mode="horizontal_and_vertical")(x)
-        x = layers.RandomRotation(factor=self.rotation_factor)(x)
-        x = layers.RandomZoom(height_factor=self.zoom_factor)(x)
+        x = keras_cv.layers.RandomBrightness(factor=self.brightness_factor)(x)
+        x = keras_cv.layers.RandomGaussianBlur(kernel_size=3, factor=(0.0, 1.0))(
+            x
+        )  # Lớp này để mặc định
+        x = keras_cv.layers.RandomContrast(
+            factor=self.contrast_factor,
+            value_range=(1 - self.contrast_factor, 1 + self.contrast_factor),
+        )(x)
+        x = keras_cv.layers.RandomHue(
+            factor=self.hue_factor,
+            value_range=(1 - self.hue_factor, 1 + self.hue_factor),
+        )(x)
+        x = keras_cv.layers.RandomSaturation(factor=self.saturation_factor)(x)
 
         return x
 

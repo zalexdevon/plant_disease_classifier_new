@@ -34,20 +34,16 @@ from tensorflow.keras.layers import (
     Flatten,
     Dense,
 )
-
-from keras_cv.layers import (
-    RandomFlip,
-    RandomRotation,
-    RandomZoom,
-    RandomBrightness,
-    RandomGaussianBlur,
-    RandomContrast,
-    RandomHue,
-    RandomSaturation,
-)
-
-
 from tensorflow.keras.optimizers import RMSprop
+from typing import Union
+from myclasses import (
+    ConvNetBlock_XceptionVersion,
+    ConvNetBlock_Advanced,
+    ConvNetBlock,
+    ImageDataPositionAugmentation,
+    ImageDataColorAugmentation,
+    PretrainedModel,
+)
 
 
 def get_sum(a, b):
@@ -55,13 +51,15 @@ def get_sum(a, b):
     return a + b
 
 
-def get_outliers(data):
-    """Lấy các giá trị outlier nằm ngoài khoảng Q1 - 1.5*IQR và Q3 + 1.5*IQR
+@ensure_annotations
+def get_index_of_outliers(data: Union[np.ndarray, pd.Series]):
+    """Lấy **index** các giá trị outlier nằm ngoài khoảng Q1 - 1.5*IQR và Q3 + 1.5*IQR
+
     Args:
-        data (_type_): một mảng các số
+        data (Union[np.ndarray, pd.Series]): dữ liệu
 
     Returns:
-        _type_: các số outliers
+        list:
     """
 
     Q1 = np.percentile(data, 25)
@@ -71,9 +69,9 @@ def get_outliers(data):
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
 
-    outliers = data[(data < lower_bound) | (data > upper_bound)]
+    result = np.where((data < lower_bound) | (data > upper_bound))[0].tolist()
 
-    return outliers
+    return result
 
 
 @ensure_annotations
