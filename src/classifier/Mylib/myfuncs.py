@@ -937,8 +937,6 @@ def plot_many_lines_on_1plane_7(
 
     print("Đã cập nhật")
 
-    # fig.show()
-
     return fig
 
 
@@ -986,8 +984,6 @@ def plot_grouped_bar_chart_8(df: pd.DataFrame, id_var, value_vars):
         barmode="group",  # Hiển thị dạng cột nhóm
     )
 
-    # fig.show()
-
     return fig
 
 
@@ -1021,8 +1017,6 @@ def plot_radar_chart_9(categories: list, values: list):
             )  # Hiển thị trục và đặt giới hạn
         ),
     )
-
-    fig.show()
 
     return fig
 
@@ -1069,7 +1063,5 @@ def plot_full100percent_area_chart(df: pd.DataFrame, time_col, group, value):
         y="percent",
         color=group,
     )
-
-    fig.show()
 
     return fig
