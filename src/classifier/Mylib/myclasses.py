@@ -141,3 +141,27 @@ class ConvNetBlock(layers.Layer):
         x = layers.MaxPooling2D(pool_size=2)(x)
 
         return x
+
+
+class DataPositionAugmentation(layers.Layer):
+    """Tăng cường dữ liệu ở khía cạnh vị trí, bao gồm các lớp sau (**trong tf.keras.layers**)
+    - RandomFlip
+    - RandomRotation
+    - RandomZoom
+
+    Attributes:
+    """
+
+    def __init__(self, filters, num_Conv2D=1):
+        """ """
+        super(ConvNetBlock, self).__init__()
+        self.filters = filters
+        self.num_Conv2D = num_Conv2D
+
+    def call(self, x):
+        for _ in range(self.num_Conv2D):
+            x = layers.Conv2D(self.filters, 3, activation="relu")(x)
+
+        x = layers.MaxPooling2D(pool_size=2)(x)
+
+        return x
