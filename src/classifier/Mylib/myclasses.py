@@ -150,18 +150,18 @@ class DataPositionAugmentation(layers.Layer):
     - RandomZoom
 
     Attributes:
+        rotation_factor (float): Tham số cho lớp RandomRotation
+        zoom_factor (float): Tham số cho lớp RandomZoom
     """
 
-    def __init__(self, filters, num_Conv2D=1):
-        """ """
+    def __init__(self, rotation_factor, zoom_factor):
         super(ConvNetBlock, self).__init__()
-        self.filters = filters
-        self.num_Conv2D = num_Conv2D
+        self.rotation_factor = rotation_factor
+        self.zoom_factor = zoom_factor
 
     def call(self, x):
-        for _ in range(self.num_Conv2D):
-            x = layers.Conv2D(self.filters, 3, activation="relu")(x)
-
-        x = layers.MaxPooling2D(pool_size=2)(x)
+        x = layers.RandomFlip(mode="horizontal_and_vertical")(x)
+        x = layers.RandomRotation(factor=self.rotation_factor)(x)
+        x = layers.RandomZoom(height_factor=self.zoom_factor)(x)
 
         return x
