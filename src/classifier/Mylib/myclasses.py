@@ -177,13 +177,24 @@ class ImageDataPositionAugmentation(layers.Layer):
         self.rotation_factor = rotation_factor
         self.zoom_factor = zoom_factor
 
-    def call(self, x):
-        x = layers.RandomFlip(mode="horizontal_and_vertical")(x)
-        x = layers.RandomRotation(factor=self.rotation_factor)(x)
-        x = layers.RandomZoom(height_factor=self.zoom_factor)(x)
+    def build(self, input_shape):
+        self.RandomFlip = layers.RandomFlip(mode="horizontal_and_vertical")
+        self.RandomRotation = layers.RandomRotation(factor=self.rotation_factor)
+        self.RandomZoom = layers.RandomZoom(height_factor=self.zoom_factor)
+
+        super().build(input_shape)
 
         print(
-            "============= Đã qua được lớp ImageDataPositionAugmentation ==============="
+            "============== Build class ImageDataPositionAugmentation đã xong =================="
+        )
+
+    def call(self, x):
+        x = self.RandomFlip(x)
+        x = self.RandomRotation(x)
+        x = self.RandomZoom(x)
+
+        print(
+            "============= Call class ImageDataPositionAugmentation đã xong  ==============="
         )
 
         return x
