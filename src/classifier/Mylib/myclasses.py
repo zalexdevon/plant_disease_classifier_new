@@ -85,7 +85,8 @@ class ConvNetBlock_Advanced(layers.Layer):
     """
 
     def __init__(self, filters, pooling=True):
-        super(ConvNetBlock_Advanced, self).__init__()
+        # super(ConvNetBlock_Advanced, self).__init__()
+        super().__init__()
         self.filters = filters
         self.pooling = pooling
 
@@ -133,7 +134,8 @@ class ConvNetBlock(layers.Layer):
 
     def __init__(self, filters, num_Conv2D=1):
         """ """
-        super(ConvNetBlock, self).__init__()
+        # super(ConvNetBlock, self).__init__()
+        super().__init__()
         self.filters = filters
         self.num_Conv2D = num_Conv2D
 
@@ -158,7 +160,8 @@ class ImageDataPositionAugmentation(layers.Layer):
     """
 
     def __init__(self, rotation_factor=0.2, zoom_factor=0.2):
-        super(ImageDataPositionAugmentation, self).__init__()
+        # super(ImageDataPositionAugmentation, self).__init__()
+        super().__init__()
         self.rotation_factor = rotation_factor
         self.zoom_factor = zoom_factor
 
@@ -192,7 +195,8 @@ class ImageDataColorAugmentation(layers.Layer):
         hue_factor=0.2,
         saturation_factor=0.2,
     ):
-        super(ImageDataColorAugmentation, self).__init__()
+        # super(ImageDataColorAugmentation, self).__init__()
+        super().__init__()
         self.brightness_factor = brightness_factor
         self.contrast_factor = contrast_factor
         self.hue_factor = hue_factor
@@ -233,7 +237,8 @@ class PretrainedModel(layers.Layer):
                 "=========ERROR: Tham số <num_trainable> trong class PretrainedModel phải >= 0   ============="
             )
 
-        super(ConvNetBlock, self).__init__()
+        # super(ConvNetBlock, self).__init__()
+        super().__init__()
         self.name = name
         self.num_trainable = num_trainable
 
