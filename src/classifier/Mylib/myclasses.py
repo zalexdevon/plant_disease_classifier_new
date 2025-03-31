@@ -244,7 +244,7 @@ class PretrainedModel(layers.Layer):
         self.model = None
         self.preprocess_input = None
 
-    def get_model_name_and_preprocess_input(self):
+    def build(self, input_shape):
         if self.name == "vgg16":
             self.model = keras.applications.vgg16.VGG16(
                 weights="imagenet", include_top=False
@@ -269,7 +269,6 @@ class PretrainedModel(layers.Layer):
                 layer.trainable = False
 
     def call(self, x):
-        self.get_model_name_and_preprocess_input()
 
         x = self.preprocess_input(x)
         x = self.model(x)
