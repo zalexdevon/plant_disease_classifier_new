@@ -50,31 +50,45 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         print(
             "============== Build class ConvNetBlock_XceptionVersion ================="
         )
+
+        self.BatchNormalization = layers.BatchNormalization()
+        self.Activation = layers.Activation("relu")
+        self.SeparableConv2D = layers.SeparableConv2D(
+            self.filters, 3, padding="same", use_bias=False
+        )
+
+        self.BatchNormalization_1 = layers.BatchNormalization()
+        self.Activation_1 = layers.Activation("relu")
+        self.SeparableConv2D_1 = layers.SeparableConv2D(
+            self.filters, 3, padding="same", use_bias=False
+        )
+        self.MaxPooling2D = layers.MaxPooling2D(3, strides=2, padding="same")
+
+        self.Conv2D = layers.Conv2D(
+            self.filters, 1, strides=2, padding="same", use_bias=False
+        )
+
         super().build(input_shape)
 
     def call(self, x):
         residual = x
 
         # First part of the block
-        x = layers.BatchNormalization()(x)
-        x = layers.Activation("relu")(x)
-        x = layers.SeparableConv2D(self.filters, 3, padding="same", use_bias=False)(x)
+        x = self.BatchNormalization(x)
+        x = self.Activation(x)
+        x = self.SeparableConv2D(x)
 
         # Second part of the block
-        x = layers.BatchNormalization()(x)
-        x = layers.Activation("relu")(x)
-        x = layers.SeparableConv2D(self.filters, 3, padding="same", use_bias=False)(x)
-        x = layers.MaxPooling2D(3, strides=2, padding="same")(x)
+        x = self.BatchNormalization_1(x)
+        x = self.Activation_1(x)
+        x = self.SeparableConv2D_1(x)
+        x = self.MaxPooling2D(x)
 
         # Apply residual connection
-        residual = layers.Conv2D(
-            self.filters, 1, strides=2, padding="same", use_bias=False
-        )(residual)
+        residual = self.Conv2D(residual)
         x = layers.add([x, residual])
 
-        print(
-            "============= Đã qua được lớp ConvNetBlock_XceptionVersion ==============="
-        )
+        print("============= Call class ConvNetBlock_XceptionVersion ===============")
 
         return x
 
@@ -100,34 +114,54 @@ class ConvNetBlock_Advanced(layers.Layer):
 
         print("===========Khởi tạo thành công ============")
 
+    def build(self, input_shape):
+
+        self.BatchNormalization = layers.BatchNormalization()
+        self.Activation = layers.Activation("relu")
+        self.Conv2D = layers.Conv2D(self.filters, 3, padding="same")
+
+        self.BatchNormalization_1 = layers.BatchNormalization()
+        self.Activation_1 = layers.Activation("relu")
+        self.Conv2D_1 = layers.Conv2D(self.filters, 3, padding="same")
+
+        self.MaxPooling2D = layers.MaxPooling2D(2, padding="same")
+
+        self.Conv2D_2 = layers.Conv2D(self.filters, 1, strides=2)
+
+        self.Conv2D_3 = layers.Conv2D(self.filters, 1)
+
+        super().build(input_shape)
+
+        print("============== Build class ConvNetBlock_Advanced =================")
+
     def call(self, x):
         residual = x
 
         # First part of the block
-        x = layers.BatchNormalization()(x)
-        x = layers.Activation("relu")(x)
-        x = layers.Conv2D(self.filters, 3, padding="same")(x)
+        x = self.BatchNormalization(x)
+        x = self.Activation(x)
+        x = self.Conv2D(x)
 
         # Second part of the block
-        x = layers.BatchNormalization()(x)
-        x = layers.Activation("relu")(x)
-        x = layers.Conv2D(self.filters, 3, padding="same")(x)
+        x = self.BatchNormalization_1(x)
+        x = self.Activation_1(x)
+        x = self.Conv2D_1(x)
 
         # Có dùng MaxPooling2D không
         if self.pooling:
-            x = layers.MaxPooling2D(2, padding="same")(x)
-            residual = layers.Conv2D(self.filters, 1, strides=2)(
+            x = self.MaxPooling2D(x)
+            residual = self.Conv2D_2(
                 residual
             )  # Có dùng max pooling thì kèm cái này thôi
         elif self.filters != residual.shape[-1]:
-            residual = layers.Conv2D(self.filters, 1)(
+            residual = self.Conv2D_3(
                 residual
             )  # Nếu không dùng max pooling thì kèm cái này
 
         # Apply residual connection
         x = layers.add([x, residual])
 
-        print("============= Đã qua được lớp ConvNetBlock_Advanced ===============")
+        print("============= Call class ConvNetBlock_Advanced ===============")
 
         return x
 
@@ -149,13 +183,25 @@ class ConvNetBlock(layers.Layer):
         self.filters = filters
         self.num_Conv2D = num_Conv2D
 
+    def build(self, input_shape):
+        self.list_Conv2D = [
+            layers.Conv2D(self.filters, 3, activation="relu")
+            for _ in range(self.num_Conv2D)
+        ]
+
+        self.MaxPooling2D = layers.MaxPooling2D(pool_size=2)
+
+        super().build(input_shape)
+
+        print("============== Build class ConvNetBlock =================")
+
     def call(self, x):
-        for _ in range(self.num_Conv2D):
-            x = layers.Conv2D(self.filters, 3, activation="relu")(x)
+        for conv2D in self.list_Conv2D:
+            x = conv2D(x)
 
-        x = layers.MaxPooling2D(pool_size=2)(x)
+        x = self.MaxPooling2D(x)
 
-        print("============= Đã qua được lớp ConvNetBlock ===============")
+        print("============= Call class ConvNetBlock ===============")
 
         return x
 
@@ -229,24 +275,39 @@ class ImageDataColorAugmentation(layers.Layer):
         self.hue_factor = hue_factor
         self.saturation_factor = saturation_factor
 
-    def call(self, x):
-        x = keras_cv.layers.RandomBrightness(factor=self.brightness_factor)(x)
-        x = keras_cv.layers.RandomGaussianBlur(kernel_size=3, factor=(0.0, 1.0))(
-            x
-        )  # Lớp này để mặc định
-        x = keras_cv.layers.RandomContrast(
+    def build(self, input_shape):
+        self.RandomBrightness = keras_cv.layers.RandomBrightness(
+            factor=self.brightness_factor
+        )
+        self.RandomGaussianBlur = keras_cv.layers.RandomGaussianBlur(
+            kernel_size=3, factor=(0.0, 1.0)
+        )
+        self.RandomContrast = keras_cv.layers.RandomContrast(
             factor=self.contrast_factor,
             value_range=(1 - self.contrast_factor, 1 + self.contrast_factor),
-        )(x)
-        x = keras_cv.layers.RandomHue(
+        )
+        self.RandomHue = keras_cv.layers.RandomHue(
             factor=self.hue_factor,
             value_range=(1 - self.hue_factor, 1 + self.hue_factor),
-        )(x)
-        x = keras_cv.layers.RandomSaturation(factor=self.saturation_factor)(x)
+        )
+        self.RandomSaturation = keras_cv.layers.RandomSaturation(
+            factor=self.saturation_factor
+        )
+
+        super().build(input_shape)
 
         print(
-            "============= Đã qua được lớp ImageDataColorAugmentation ==============="
+            "============== Build class ImageDataColorAugmentation đã xong =================="
         )
+
+    def call(self, x):
+        x = self.RandomBrightness(x)
+        x = self.RandomGaussianBlur(x)  # Lớp này để mặc định
+        x = self.RandomContrast(x)
+        x = self.RandomHue(x)
+        x = self.RandomSaturation(x)
+
+        print("============= Call class ImageDataColorAugmentation ===============")
 
         return x
 
@@ -299,10 +360,13 @@ class PretrainedModel(layers.Layer):
             for layer in self.model.layers[: -self.num_trainable]:
                 layer.trainable = False
 
-    def call(self, x):
+        super().build(input_shape)
 
+        print("============= Build class PretrainedModel ===============")
+
+    def call(self, x):
         x = self.preprocess_input(x)
         x = self.model(x)
 
-        print("============= Đã qua được lớp PretrainedModel ===============")
+        print("============= Call class PretrainedModel ===============")
         return x
