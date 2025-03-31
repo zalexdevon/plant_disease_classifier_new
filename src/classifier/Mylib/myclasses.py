@@ -50,7 +50,7 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         print(
             "============== Build class ConvNetBlock_XceptionVersion ================="
         )
-        super.build(input_shape)
+        super().build(input_shape)
 
     def call(self, x):
         residual = x
