@@ -241,6 +241,8 @@ class PretrainedModel(layers.Layer):
         super().__init__()
         self.name = name
         self.num_trainable = num_trainable
+        self.model = None
+        self.preprocess_input = None
 
     def get_model_name_and_preprocess_input(self):
         if self.name == "vgg16":
