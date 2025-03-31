@@ -68,6 +68,10 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         )(residual)
         x = layers.add([x, residual])
 
+        print(
+            "============= Đã qua được lớp ConvNetBlock_XceptionVersion ==============="
+        )
+
         return x
 
 
@@ -119,6 +123,8 @@ class ConvNetBlock_Advanced(layers.Layer):
         # Apply residual connection
         x = layers.add([x, residual])
 
+        print("============= Đã qua được lớp ConvNetBlock_Advanced ===============")
+
         return x
 
 
@@ -145,6 +151,8 @@ class ConvNetBlock(layers.Layer):
 
         x = layers.MaxPooling2D(pool_size=2)(x)
 
+        print("============= Đã qua được lớp ConvNetBlock ===============")
+
         return x
 
 
@@ -169,6 +177,10 @@ class ImageDataPositionAugmentation(layers.Layer):
         x = layers.RandomFlip(mode="horizontal_and_vertical")(x)
         x = layers.RandomRotation(factor=self.rotation_factor)(x)
         x = layers.RandomZoom(height_factor=self.zoom_factor)(x)
+
+        print(
+            "============= Đã qua được lớp ImageDataPositionAugmentation ==============="
+        )
 
         return x
 
@@ -216,6 +228,10 @@ class ImageDataColorAugmentation(layers.Layer):
             value_range=(1 - self.hue_factor, 1 + self.hue_factor),
         )(x)
         x = keras_cv.layers.RandomSaturation(factor=self.saturation_factor)(x)
+
+        print(
+            "============= Đã qua được lớp ImageDataColorAugmentation ==============="
+        )
 
         return x
 
@@ -272,4 +288,6 @@ class PretrainedModel(layers.Layer):
 
         x = self.preprocess_input(x)
         x = self.model(x)
+
+        print("============= Đã qua được lớp PretrainedModel ===============")
         return x
