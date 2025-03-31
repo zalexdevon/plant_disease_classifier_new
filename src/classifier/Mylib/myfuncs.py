@@ -935,6 +935,8 @@ def plot_many_lines_on_1plane_7(
         color_discrete_map=dict(zip(value_vars, color_value_vars)),
     )
 
+    print("Đã cập nhật")
+
     # fig.show()
 
     return fig
@@ -1037,7 +1039,7 @@ def plot_full100percent_area_chart(df: pd.DataFrame, time_col, group, value):
     })
     ```
 
-    Vẽ biểu đồ miền thể hiện tỉ trọng của từng **Nhóm** qua từng quý (Q1, Q2, ...)
+    Vẽ biểu đồ miền thể hiện tỉ trọng của từng **Nhóm** qua từng **Thời gian** (Các quý Q1, Q2, ...)
 
     ```python
     plot_full100percent_area_chart(data, "Thời gian", "Nhóm", "Giá trị")
