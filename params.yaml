@@ -21,7 +21,6 @@ model_trainer:
             - RandomHue(factor=0.08, value_range=(0.8; 1.2))
             - RandomSaturation(factor=0.3)
 
-
             # rescale 
             - Rescaling(scale = 0.00392) # 1 / 255
 

@@ -135,6 +135,7 @@ class ModelTrainer:
 
         # In ra các kết quả đánh giá
         print("========KET QUA MO HINH TOT NHAT================")
+        print("Tên model: " + self.config.model_name)
         for key, value in results.items():
             print(f"{key}: {value}")
         print(f"Số epochs đã chạy: {num_epochs} / {self.config.epochs}")
@@ -148,6 +149,7 @@ class ModelTrainer:
         for item in metrics_and_loss:
             plt.plot(epochs, self.history[item], color="gray")
             plt.plot(epochs, self.history["val_" + item], color="blue")
+            plt.ylim(bottom=0)
             plt.savefig(
                 os.path.join(self.config.root_dir, item + "_per_epoch.png"),
                 dpi=None,
