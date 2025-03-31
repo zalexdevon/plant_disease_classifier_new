@@ -42,7 +42,8 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
 
     def __init__(self, filters):
         """_summary_"""
-        super(ConvNetBlock_XceptionVersion, self).__init__()
+        # super(ConvNetBlock_XceptionVersion, self).__init__()
+        super().__init__()
         self.filters = filters
 
         print("===========Khởi tạo thành công ============")
