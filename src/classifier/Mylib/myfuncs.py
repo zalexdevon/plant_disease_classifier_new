@@ -27,6 +27,7 @@ import ast
 from io import StringIO
 import sys
 from tensorflow.keras.callbacks import EarlyStopping
+
 from tensorflow.keras.layers import (
     Rescaling,
     Conv2D,
@@ -34,8 +35,11 @@ from tensorflow.keras.layers import (
     Flatten,
     Dense,
 )
+
 from tensorflow.keras.optimizers import RMSprop
+
 from typing import Union
+
 from classifier.Mylib.myclasses import (
     ConvNetBlock_XceptionVersion,
     ConvNetBlock_Advanced,
@@ -44,6 +48,7 @@ from classifier.Mylib.myclasses import (
     ImageDataColorAugmentation,
     PretrainedModel,
 )
+import plotly.graph_objects as go
 
 
 def get_sum(a, b):
@@ -883,3 +888,107 @@ def do_ast_literal_eval_advanced_7(text: str):
 
     items = text.strip(r"()").split(";")
     return tuple(ast.literal_eval(item.strip()) for item in items)
+
+
+@ensure_annotations
+def plot_many_lines_on_1plane_7(
+    df: pd.DataFrame, id_var: str, value_vars: list, color_value_vars: list
+):
+    """Vẽ biểu đồ multiple lines
+
+    Examples:
+        |Ngày | Hạng A | Hạng B |
+        |---|---|---|
+        |1|15|16|
+        |2|10|20|
+        |3|20|40|
+        |4|30|90|
+
+        Khi đó vẽ biểu đồ thể hiện doanh thu các hạng theo từng ngày
+
+        ```python
+        plot_many_lines_on_1plane_7(df, 'Ngày', ['Hạng A','Hạng B'], ['blue', 'gray'])
+        ```
+
+
+    Args:
+        df (pd.DataFrame): Dữ liệu chứa các cột cần vẽ
+        id_var (str): Tên cột mà sẽ ở trục **x**
+        value_vars (list): Tên các cột sẽ hiện thành đường
+        color_value_vars (list): Màu ứng với các đường
+
+    Returns:
+        _type_: Đối tượng **fig** để sau này lưu file, ...
+    """
+
+    # Chuyển đổi dữ liệu từ wide format sang long format
+    df_long = df.melt(
+        id_vars=[id_var], value_vars=value_vars, var_name="Category", value_name="y"
+    )
+
+    fig = px.line(
+        df_long,
+        x=id_var,
+        y="y",
+        color="Category",
+        markers=True,
+        color_discrete_map=dict(zip(value_vars, color_value_vars)),
+    )
+
+    fig.show()
+
+    return fig
+
+
+@ensure_annotations
+def plot_grouped_bar_chart_8(df: pd.DataFrame, id_var, value_vars):
+    """Vẽ biểu đồ grouped bar chart
+
+    Examples:
+        |Ngày | Hạng A | Hạng B |
+        |---|---|---|
+        |1|15|16|
+        |2|10|20|
+        |3|20|40|
+        |4|30|90|
+
+        Khi đó vẽ biểu đồ thể hiện doanh thu các hạng theo từng ngày, mỗi ngày sẽ có 2 cột ứng với 2 hạng A, B
+
+        ```python
+        plot_grouped_bar_chart_8(df, 'Ngày', ['Hạng A','Hạng B'])
+        ```
+
+
+    Args:
+        df (pd.DataFrame): Dữ liệu chứa các cột cần vẽ
+        id_var (str): Tên cột mà sẽ ở trục **x**
+        value_vars (list): Tên các cột sẽ hiện thành đường
+
+    Returns:
+        _type_: Đối tượng **fig** để sau này lưu file, ...
+    """
+    # Chuyển đổi dữ liệu sang định dạng dài (long format)
+    data_melted = df.melt(
+        id_vars=[id_var],
+        value_vars=value_vars,
+        var_name="Category",
+        value_name="y",
+    )
+
+    # Vẽ Grouped Bar Chart
+    fig = px.bar(
+        data_melted,
+        x=id_var,
+        y="y",
+        color="Category",  # Màu sắc theo năm
+        barmode="group",  # Hiển thị dạng cột nhóm
+    )
+
+    fig.show()
+
+    return fig
+
+
+@ensure_annotations
+def plot_radar_chart_9(categories: list, values: list):
+    pass
