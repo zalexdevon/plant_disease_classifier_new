@@ -447,15 +447,15 @@ class GradCAMForImages:
         """
         last_conv_layer = None
         classifier_layers = None
-        if isinstance(self.last_convnet_layer_name, str):
-            layer_names = [layer.name for layer in self.model.layers]
-            last_conv_layer = self.model.get_layer(self.last_convnet_layer_name)
-            classifier_layers = self.model.layers[
-                layer_names.index(self.last_convnet_layer_name) + 1 :
-            ]
-        else:
-            last_conv_layer = self.model.layers[self.last_convnet_layer_name]
-            classifier_layers = self.model.layers[self.last_convnet_layer_name + 1 :]
+        # if isinstance(self.last_convnet_layer_name, str):
+        #     layer_names = [layer.name for layer in self.model.layers]
+        #     last_conv_layer = self.model.get_layer(self.last_convnet_layer_name)
+        #     classifier_layers = self.model.layers[
+        #         layer_names.index(self.last_convnet_layer_name) + 1 :
+        #     ]
+        # else:
+        last_conv_layer = self.model.layers[self.last_convnet_layer_name]
+        classifier_layers = self.model.layers[self.last_convnet_layer_name + 1 :]
 
         # Model đầu tiên
         last_conv_layer_model = keras.Model(
