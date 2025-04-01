@@ -333,8 +333,6 @@ class PretrainedModel(layers.Layer):
         super().__init__()
         self.name = name
         self.num_trainable = num_trainable
-        self.model = None
-        self.preprocess_input = None
 
     def build(self, input_shape):
         if self.name == "vgg16":

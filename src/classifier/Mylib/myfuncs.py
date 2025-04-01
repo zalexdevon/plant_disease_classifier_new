@@ -892,7 +892,12 @@ def do_ast_literal_eval_advanced_7(text: str):
 
 @ensure_annotations
 def plot_many_lines_on_1plane_7(
-    df: pd.DataFrame, id_var: str, value_vars: list, color_value_vars: list
+    df: pd.DataFrame,
+    id_var: str,
+    value_vars: list,
+    color_value_vars: list,
+    xaxis_title=None,
+    yaxis_title=None,
 ):
     """Vẽ biểu đồ multiple lines
 
@@ -916,6 +921,8 @@ def plot_many_lines_on_1plane_7(
         id_var (str): Tên cột mà sẽ ở trục **x**
         value_vars (list): Tên các cột sẽ hiện thành đường
         color_value_vars (list): Màu ứng với các đường
+        xaxis_title (list): Title cho trục x
+        yaxis_title (list): Title cho trục y
 
     Returns:
         _type_: Đối tượng **fig** để sau này lưu file, ...
@@ -935,13 +942,27 @@ def plot_many_lines_on_1plane_7(
         color_discrete_map=dict(zip(value_vars, color_value_vars)),
     )
 
+    xaxis_title = id_var if xaxis_title is None else xaxis_title
+    yaxis_title = "y" if yaxis_title is None else yaxis_title
+
+    fig.update_layout(
+        xaxis_title=xaxis_title,
+        yaxis_title=yaxis_title,
+    )
+
     print("Đã cập nhật")
 
     return fig
 
 
 @ensure_annotations
-def plot_grouped_bar_chart_8(df: pd.DataFrame, id_var, value_vars):
+def plot_grouped_bar_chart_8(
+    df: pd.DataFrame,
+    id_var,
+    value_vars,
+    xaxis_title=None,
+    yaxis_title=None,
+):
     """Vẽ biểu đồ grouped bar chart
 
     Examples:
@@ -963,6 +984,8 @@ def plot_grouped_bar_chart_8(df: pd.DataFrame, id_var, value_vars):
         df (pd.DataFrame): Dữ liệu chứa các cột cần vẽ
         id_var (str): Tên cột mà sẽ ở trục **x**
         value_vars (list): Tên các cột sẽ hiện thành đường
+        xaxis_title (list): Title cho trục x
+        yaxis_title (list): Title cho trục y
 
     Returns:
         _type_: Đối tượng **fig** để sau này lưu file, ...
@@ -982,6 +1005,14 @@ def plot_grouped_bar_chart_8(df: pd.DataFrame, id_var, value_vars):
         y="y",
         color="Category",  # Màu sắc theo năm
         barmode="group",  # Hiển thị dạng cột nhóm
+    )
+
+    xaxis_title = id_var if xaxis_title is None else xaxis_title
+    yaxis_title = "y" if yaxis_title is None else yaxis_title
+
+    fig.update_layout(
+        xaxis_title=xaxis_title,
+        yaxis_title=yaxis_title,
     )
 
     return fig
