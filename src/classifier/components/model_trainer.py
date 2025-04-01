@@ -47,24 +47,13 @@ class ModelTrainer:
         ] + self.config.callbacks
 
     def load_model(self):
-        inputs = keras.Input(shape=(self.config.image_size, self.config.image_size, 3))
+        inputs = self.config.layers[0]
+        x = inputs
 
-        resize_layer = keras.layers.Resizing(
-            self.config.image_size, self.config.image_size
-        )(inputs)
-
-        first_layer = self.config.layers[0]
-        middle_layers = self.config.layers[1:]
-        last_layer = Dense(units=len(self.config.class_names), activation="softmax")
-
-        x = first_layer(resize_layer)
-
-        for layer in middle_layers:
+        for layer in self.config.layers[1:]:
             x = layer(x)
 
-        outputs = last_layer(x)
-
-        self.model = keras.Model(inputs=inputs, outputs=outputs)
+        self.model = keras.Model(inputs=inputs, outputs=x)
 
         self.model.compile(
             optimizer=self.config.optimizer,
@@ -137,7 +126,7 @@ class ModelTrainer:
 
         # In ra các kết quả đánh giá
         best_model_results = "========KET QUA CUA MO HINH TOT NHAT================\n"
-        best_model_results = "CAC CHI SO DANH GIA:\n"
+        best_model_results += "CAC CHI SO DANH GIA:\n"
 
         for key, value in results.items():
             best_model_results += f"- {key}: {value}\n"

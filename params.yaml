@@ -6,11 +6,17 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_39
+      model_name: CONVNET_40
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=1, min_delta=1)
       layers: 
+            # input 
+            - Input(shape=(256; 256; 3))
+
+            # resize image 
+            - Resizing(height=256, width=256)
+
             # data augmentation 
             - ImageDataPositionAugmentation()
             - ImageDataColorAugmentation()
@@ -22,13 +28,14 @@ model_trainer:
             # - PretrainedModel(name='vgg16')
 
             # Convnet 
-            - ConvNetBlock(filters = 32)
+            - ConvNetBlock(filters = 32, name = 'last_convnet_block')
             # - ConvNetBlock_Advanced(filters = 64)
             # - ConvNetBlock_XceptionVersion(filters = 128, name='last_convnet')
 
-            # Classifier
+            # output
             - Flatten()
             - Dense(units=  64, activation='relu')
+            - Dense(units=  3, activation='softmax')
 
       optimizer: RMSprop()
       loss: sparse_categorical_crossentropy

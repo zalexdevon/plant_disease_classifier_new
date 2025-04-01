@@ -236,6 +236,12 @@ class ConvNetBlock(layers.Layer):
         name = config.pop("name", None)
         return cls(**config)
 
+    # TODO: d
+    def print(self):
+        print("Ok roi !!!!!!")
+
+    # d
+
 
 class ImageDataPositionAugmentation(layers.Layer):
     """Tăng cường dữ liệu hình ảnh ở khía cạnh vị trí, bao gồm các lớp sau (**trong tf.keras.layers**)
