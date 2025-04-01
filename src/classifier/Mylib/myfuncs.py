@@ -28,7 +28,9 @@ from io import StringIO
 import sys
 from tensorflow.keras.callbacks import EarlyStopping
 
+from tensorflow.keras import Input
 from tensorflow.keras.layers import (
+    Resizing,
     Rescaling,
     Conv2D,
     MaxPooling2D,
