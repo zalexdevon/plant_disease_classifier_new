@@ -427,7 +427,7 @@ class GradCAMForImages:
     Attributes:
         images (_type_): Tập ảnh đã được chuyển thành **array**
         model (_type_): model
-        last_convnet_layer_name (_type_): Tên của layer convent cuối cùng trong model
+        last_convnet_layer_name (_type_): **Tên** hoặc  **index** của layer convent cuối cùng trong model
     """
 
     def __init__(self, images, model, last_convnet_layer_name):
@@ -445,25 +445,30 @@ class GradCAMForImages:
         Returns:
             tuple: last_conv_layer_model, classifier_model
         """
+        last_conv_layer = None
+        classifier_layers = None
+        if isinstance(self.last_convnet_layer_name, str):
+            layer_names = [layer.name for layer in self.model.layers]
+            last_conv_layer = self.model.get_layer(self.last_convnet_layer_name)
+            classifier_layers = self.model.layers[
+                layer_names.index(self.last_convnet_layer_name) + 1 :
+            ]
+        else:
+            last_conv_layer = self.model.layers[self.last_convnet_layer_name]
+            classifier_layers = self.model.layers[self.last_convnet_layer_name + 1 :]
 
         # Model đầu tiên
-        last_conv_layer = self.model.get_layer(self.last_convnet_layer_name)
         last_conv_layer_model = keras.Model(
             inputs=self.model.inputs, outputs=last_conv_layer.output
         )
 
-        # Model thứ hai
-        layer_names = [layer.name for layer in self.model.layers]
-        classifier_layer_names = layer_names[
-            layer_names.index(self.last_convnet_layer_name) + 1 :
-        ]
-
         classifier_input = keras.Input(shape=last_conv_layer.output.shape[1:])
         x = classifier_input
 
-        for layer_name in classifier_layer_names:
+        for layer_name in classifier_layers:
             x = self.model.get_layer(layer_name)(x)
 
+        # Model thứ hai
         classifier_model = keras.Model(inputs=classifier_input, outputs=x)
 
         return last_conv_layer_model, classifier_model
