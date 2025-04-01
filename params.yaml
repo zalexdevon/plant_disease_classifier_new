@@ -6,7 +6,7 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_41
+      model_name: CONVNET_42
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=1, min_delta=1)
@@ -18,8 +18,8 @@ model_trainer:
             - Resizing(height=256, width=256)
 
             # data augmentation 
-            - ImageDataPositionAugmentation()
-            - ImageDataColorAugmentation()
+            # - ImageDataPositionAugmentation()
+            # - ImageDataColorAugmentation()
 
             # rescale 
             - Rescaling(scale = 0.00392) # 1 / 255
@@ -34,7 +34,7 @@ model_trainer:
 
             # output
             - Flatten()
-            - Dense(units=  64, activation='relu')
+            # - Dense(units=  64, activation='relu')
             - Dense(units=  3, activation='softmax')
 
       optimizer: RMSprop()

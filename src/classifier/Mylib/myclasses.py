@@ -26,6 +26,7 @@ import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow import keras
 import keras_cv
+import matplotlib.cm as cm
 
 
 class ConvNetBlock_XceptionVersion(layers.Layer):
@@ -232,8 +233,6 @@ class ConvNetBlock(layers.Layer):
 
     @classmethod
     def from_config(cls, config):
-        # Giải mã lại lớp từ cấu hình
-        name = config.pop("name", None)
         return cls(**config)
 
     # TODO: d
@@ -421,3 +420,99 @@ class PretrainedModel(layers.Layer):
         x = self.model(x)
 
         return x
+
+
+class GradCAMForImages:
+    """Thực hiện quá trình GradCAM để xác định những phần nảo của ảnh hỗ trợ model phân loại nhiều nhất
+    Attributes:
+        images (_type_): Tập ảnh đã được chuyển thành **array**
+        model (_type_): model
+        last_convnet_layer_name (_type_): Tên của layer convent cuối cùng trong model
+    """
+
+    def __init__(self, images, model, last_convnet_layer_name):
+        self.images = images
+        self.model = model
+        self.last_convnet_layer_name = last_convnet_layer_name
+
+    def create_models(self):
+        """Tạo ra 2 model sau:
+
+        **last_conv_layer_model**: model map input image -> convnet block cuối cùng
+
+        **classifier_model**: model map convnet block cuối cùng -> final class predictions.
+
+        Returns:
+            tuple: last_conv_layer_model, classifier_model
+        """
+
+        # Model đầu tiên
+        last_conv_layer = self.model.get_layer(self.last_convnet_layer_name)
+        last_conv_layer_model = keras.Model(
+            inputs=self.model.inputs, outputs=last_conv_layer.output
+        )
+
+        # Model thứ hai
+        layer_names = [layer.name for layer in self.model.layers]
+        classifier_layer_names = layer_names[
+            layer_names.index(self.last_convnet_layer_name) + 1 :
+        ]
+
+        classifier_input = keras.Input(shape=last_conv_layer.output.shape[1:])
+        x = classifier_input
+
+        for layer_name in classifier_layer_names:
+            x = self.model.get_layer(layer_name)(x)
+
+        classifier_model = keras.Model(inputs=classifier_input, outputs=x)
+
+        return last_conv_layer_model, classifier_model
+
+    def do_gradient(self, last_conv_layer_model, classifier_model):
+        with tf.GradientTape() as tape:
+            last_conv_layer_output = last_conv_layer_model(self.images)
+            tape.watch(last_conv_layer_output)
+            preds = classifier_model(last_conv_layer_output)
+            top_pred_index = tf.argmax(preds[0])
+            top_class_channel = preds[:, top_pred_index]
+
+        grads = tape.gradient(top_class_channel, last_conv_layer_output)
+        return grads, last_conv_layer_output
+
+    def get_heatmap(self, grads, last_conv_layer_output):
+        pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2)).numpy()
+        last_conv_layer_output = last_conv_layer_output.numpy()[0]
+
+        for i in range(pooled_grads.shape[-1]):
+            last_conv_layer_output[:, :, i] *= pooled_grads[i]
+
+        heatmap = np.mean(last_conv_layer_output, axis=-1)
+        heatmap = np.maximum(heatmap, 0)
+        heatmap /= np.max(heatmap)
+
+        return heatmap
+
+    def convert_1image(self, img, heatmap):
+        heatmap = np.uint8(255 * heatmap)
+
+        jet = cm.get_cmap("jet")  # Dùng "jet" để tô màu lại heatmap
+        jet_colors = jet(np.arange(256))[:, :3]
+        jet_heatmap = jet_colors[heatmap]
+        jet_heatmap = keras.utils.array_to_img(jet_heatmap)
+        jet_heatmap = jet_heatmap.resize((img.shape[1], img.shape[0]))
+        jet_heatmap = keras.utils.img_to_array(jet_heatmap)
+        superimposed_img = jet_heatmap * 0.4 + img
+        superimposed_img = keras.utils.array_to_img(superimposed_img)
+
+        return superimposed_img
+
+    def convert(self):
+        last_conv_layer_model, classifier_model = self.create_models()
+        grads, last_conv_layer_output = self.do_gradient(
+            last_conv_layer_model, classifier_model
+        )
+        heatmap = self.get_heatmap(grads, last_conv_layer_output)
+
+        list_superimposed_img = [self.convert_1image(img) for img in self.images]
+
+        return list_superimposed_img
