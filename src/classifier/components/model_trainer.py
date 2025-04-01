@@ -146,17 +146,29 @@ class ModelTrainer:
             f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
         )
 
-        best_model_results += "\nCLASSIFICATION REPORT\n"
-        train_classification_report = self.get_classification_report_for_best_model(
-            self.train_ds
-        )
-        val_classification_report = self.get_classification_report_for_best_model(
-            self.val_ds
-        )
-        best_model_results += "Train: \n"
-        best_model_results += train_classification_report + "\n\n"
-        best_model_results += "Val: \n"
-        best_model_results += val_classification_report + "\n\n"
+        try:
+            best_model_results += "\nCLASSIFICATION REPORT\n"
+            train_classification_report = self.get_classification_report_for_best_model(
+                self.train_ds
+            )
+            val_classification_report = self.get_classification_report_for_best_model(
+                self.val_ds
+            )
+
+            # TODO: d
+            print("train_classification_report: \n" + train_classification_report)
+            print()
+            print("val_classification_report: \n" + val_classification_report)
+            # d
+
+            best_model_results += "Train: \n"
+            best_model_results += train_classification_report + "\n\n"
+            best_model_results += "Val: \n"
+            best_model_results += val_classification_report + "\n\n"
+
+            print(best_model_results)
+        except Exception as e:
+            print("Lỗi : " + e)
 
         # Ghi kết quả đánh giá vào file results.txt
         with open(self.config.results_path, mode="w") as file:

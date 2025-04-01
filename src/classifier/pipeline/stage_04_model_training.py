@@ -37,10 +37,10 @@ class ModelTrainerPipeline:
             monitor_plotter = MonitorPlotter(monitor_plotter_config)
             monitor_plotter.plot(model_trainer.list_monitor_components)
 
-            print("================ NO ERORR !!!!!!!!!! ==========================")
+            print("================ NO ERORR :)))))))))) ==========================")
 
         except Exception as e:
-            print(f"===========ERROR mất rồi =================\n{e}")
+            print(f"===========ERROR mất rồi !!!!!!!!!! =================\n{e}")
 
 
 if __name__ == "__main__":
