@@ -40,10 +40,10 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         filters (_type_): số lượng filters trong lớp SeparableConv2D
     """
 
-    def __init__(self, filters):
+    def __init__(self, filters, **kwargs):
         """_summary_"""
         # super(ConvNetBlock_XceptionVersion, self).__init__()
-        super().__init__()
+        super().__init__(**kwargs)
         self.filters = filters
 
     def build(self, input_shape):
@@ -101,6 +101,7 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
     @classmethod
     def from_config(cls, config):
         # Giải mã lại lớp từ cấu hình
+        name = config.pop("name", None)
         return cls(**config)
 
 
@@ -117,9 +118,9 @@ class ConvNetBlock_Advanced(layers.Layer):
         pooling (bool, optional): Có lớp MaxPooling2D không. Defaults to True.
     """
 
-    def __init__(self, filters, pooling=True):
+    def __init__(self, filters, pooling=True, **kwargs):
         # super(ConvNetBlock_Advanced, self).__init__()
-        super().__init__()
+        super().__init__(**kwargs)
         self.filters = filters
         self.pooling = pooling
 
@@ -190,6 +191,7 @@ class ConvNetBlock_Advanced(layers.Layer):
     @classmethod
     def from_config(cls, config):
         # Giải mã lại lớp từ cấu hình
+        name = config.pop("name", None)
         return cls(**config)
 
 
@@ -203,10 +205,10 @@ class ConvNetBlock(layers.Layer):
         num_Conv2D (int, optional): số lượng lớp num_Conv2D. Defaults to 1.
     """
 
-    def __init__(self, filters, num_Conv2D=1):
+    def __init__(self, filters, num_Conv2D=1, **kwargs):
         """ """
         # super(ConvNetBlock, self).__init__()
-        super().__init__()
+        super().__init__(**kwargs)
         self.filters = filters
         self.num_Conv2D = num_Conv2D
 
@@ -246,6 +248,7 @@ class ConvNetBlock(layers.Layer):
     @classmethod
     def from_config(cls, config):
         # Giải mã lại lớp từ cấu hình
+        name = config.pop("name", None)
         return cls(**config)
 
 
@@ -260,9 +263,9 @@ class ImageDataPositionAugmentation(layers.Layer):
         zoom_factor (float): Tham số cho lớp RandomZoom. Default to 0.2
     """
 
-    def __init__(self, rotation_factor=0.2, zoom_factor=0.2):
+    def __init__(self, rotation_factor=0.2, zoom_factor=0.2, **kwargs):
         # super(ImageDataPositionAugmentation, self).__init__()
-        super().__init__()
+        super().__init__(**kwargs)
         self.rotation_factor = rotation_factor
         self.zoom_factor = zoom_factor
 
@@ -302,6 +305,7 @@ class ImageDataPositionAugmentation(layers.Layer):
     @classmethod
     def from_config(cls, config):
         # Giải mã lại lớp từ cấu hình
+        name = config.pop("name", None)
         return cls(**config)
 
 
@@ -326,9 +330,10 @@ class ImageDataColorAugmentation(layers.Layer):
         contrast_factor=0.2,
         hue_factor=0.2,
         saturation_factor=0.2,
+        **kwargs
     ):
         # super(ImageDataColorAugmentation, self).__init__()
-        super().__init__()
+        super().__init__(**kwargs)
         self.brightness_factor = brightness_factor
         self.contrast_factor = contrast_factor
         self.hue_factor = hue_factor
@@ -371,7 +376,7 @@ class ImageDataColorAugmentation(layers.Layer):
         return x
 
     def get_config(self):
-        # Trả về cấu hình của lớp tùy chỉnh
+        # Trả về cấu hình của lớp tùy chỉnh, bao gồm cả tham số trainable và dtype
         config = super().get_config()
         config.update(
             {
@@ -385,39 +390,36 @@ class ImageDataColorAugmentation(layers.Layer):
 
     @classmethod
     def from_config(cls, config):
-        # Giải mã lại lớp từ cấu hình
+        # Loại bỏ tham số 'name' từ config (vì Keras đã xử lý nó)
+        name = config.pop("name", None)
         return cls(**config)
 
 
 class PretrainedModel(layers.Layer):
     """Sử dụng các pretrained models ở trong **keras.applications**
     Attributes:
-        name (str): Tên model
+        model_name (str): Tên pretrained model, vd: vgg16, vgg19, ....
         num_trainable (int, optional): Số lượng các lớp đầu tiên cho trainable = True. Defaults to 0.
     """
 
-    def __init__(
-        self,
-        name,
-        num_trainable=0,
-    ):
+    def __init__(self, model_name, num_trainable=0, **kwargs):
         if num_trainable < 0:
             raise ValueError(
                 "=========ERROR: Tham số <num_trainable> trong class PretrainedModel phải >= 0   ============="
             )
 
         # super(ConvNetBlock, self).__init__()
-        super().__init__()
-        self.name = name
+        super().__init__(**kwargs)
+        self.model_name = model_name
         self.num_trainable = num_trainable
 
     def build(self, input_shape):
-        if self.name == "vgg16":
+        if self.model_name == "vgg16":
             self.model = keras.applications.vgg16.VGG16(
                 weights="imagenet", include_top=False
             )
             self.preprocess_input = keras.applications.vgg16.preprocess_input
-        elif self.name == "vgg19":
+        elif self.model_name == "vgg19":
             self.model = keras.applications.vgg19.VGG19(
                 weights="imagenet", include_top=False
             )

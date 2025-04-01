@@ -134,11 +134,20 @@ class ModelTrainer:
         )
 
         # In ra các kết quả đánh giá
-        print("========KET QUA MO HINH TOT NHAT================")
-        print("Tên model: " + self.config.model_name)
+        model_results = "========KET QUA MO HINH TOT NHAT================\n"
+
         for key, value in results.items():
-            print(f"{key}: {value}")
-        print(f"Số epochs đã chạy: {num_epochs} / {self.config.epochs}")
+            model_results += f"- {key}: {value}\n"
+
+        model_results += f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
+
+        model_results += "CLASSIFICATION REPORT\n"
+
+
+        # Ghi kết quả các chỉ số vào file results.txt
+
+        with open(self.config.results_path, mode="w") as file:
+            file.write(model_results)
 
         # Lưu các biểu đồ per epoch cho từng chỉ số
         epochs = range(1, num_epochs + 1)
@@ -158,19 +167,10 @@ class ModelTrainer:
             )
             plt.clf()
 
-        # Ghi kết quả các chỉ số vào file results.txt
-        content = "SCORING\n"
-
-        for key, value in results.items():
-            content += f"- {key}: {value}\n"
-
-        content += f"\nNUM_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
-
-        with open(self.config.results_path, mode="w") as file:
-            file.write(content)
-
         # Lưu cấu trúc của model
         keras.utils.plot_model(self.model, self.config.structure_path, show_shapes=True)
+
+    def get_classif
 
     def save_list_monitor_components(self):
         if self.config.is_first_time == "f":
