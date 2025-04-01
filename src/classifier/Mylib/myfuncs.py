@@ -51,6 +51,8 @@ from classifier.Mylib.myclasses import (
     PretrainedModel,
 )
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 
 def get_sum(a, b):
@@ -1049,7 +1051,7 @@ def plot_radar_chart_9(categories: list, values: list):
     return fig
 
 
-def plot_full100percent_area_chart(df: pd.DataFrame, time_col, group, value):
+def plot_full100percent_area_chart_10(df: pd.DataFrame, time_col, group, value):
     """Vẽ biểu đồ full 100% area chart
 
     Examples:
@@ -1093,3 +1095,16 @@ def plot_full100percent_area_chart(df: pd.DataFrame, time_col, group, value):
     )
 
     return fig
+
+
+def show_img_11(img_path):
+    """Show ảnh lên
+
+    Args:
+        img_path (str): đường dẫn đến file
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    img = mpimg.imread(img_path)
+    ax.imshow(img)
+    ax.axis("off")
