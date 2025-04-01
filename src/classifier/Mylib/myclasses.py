@@ -194,10 +194,10 @@ class ConvNetBlock(layers.Layer):
         num_Conv2D (int, optional): số lượng lớp num_Conv2D. Defaults to 1.
     """
 
-    def __init__(self, filters, num_Conv2D=1, **kwargs):
+    def __init__(self, filters, num_Conv2D=1, name=None, **kwargs):
         """ """
         # super(ConvNetBlock, self).__init__()
-        super().__init__(**kwargs)
+        super().__init__(name=name, **kwargs)
         self.filters = filters
         self.num_Conv2D = num_Conv2D
 

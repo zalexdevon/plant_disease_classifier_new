@@ -139,30 +139,26 @@ class ModelTrainer:
         print("Buocwcs vào CLASSIFICATION REPORT")
         # d
 
-        try:
-            best_model_results += "\nCLASSIFICATION REPORT\n"
-            train_classification_report = self.get_classification_report_for_best_model(
-                self.train_ds
-            )
-            # TODO: d
-            print("train_classification_report thành công !!!!!")
-            # d
-            val_classification_report = self.get_classification_report_for_best_model(
-                self.val_ds
-            )
-            # TODO: d
-            print("val_classification_report thành công !!!!!")
-            # d
+        best_model_results += "\nCLASSIFICATION REPORT\n"
+        train_classification_report = self.get_classification_report_for_best_model(
+            self.train_ds
+        )
+        # TODO: d
+        print("train_classification_report thành công !!!!!")
+        # d
+        val_classification_report = self.get_classification_report_for_best_model(
+            self.val_ds
+        )
+        # TODO: d
+        print("val_classification_report thành công !!!!!")
+        # d
 
-            best_model_results += "Train: \n"
-            best_model_results += train_classification_report + "\n\n"
-            best_model_results += "Val: \n"
-            best_model_results += val_classification_report + "\n\n"
+        best_model_results += "Train: \n"
+        best_model_results += train_classification_report + "\n\n"
+        best_model_results += "Val: \n"
+        best_model_results += val_classification_report + "\n\n"
 
-            print(best_model_results)
-
-        except Exception as e:
-            print(f"Lỗi : {e}")
+        print(best_model_results)
 
         # Ghi kết quả đánh giá vào file results.txt
         with open(self.config.results_path, mode="w") as file:
