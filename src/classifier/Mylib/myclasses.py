@@ -40,10 +40,10 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         filters (_type_): số lượng filters trong lớp SeparableConv2D
     """
 
-    def __init__(self, filters, **kwargs):
+    def __init__(self, filters, name=None, **kwargs):
         """_summary_"""
         # super(ConvNetBlock_XceptionVersion, self).__init__()
-        super().__init__(**kwargs)
+        super().__init__(name=name, **kwargs)
         self.filters = filters
 
     def build(self, input_shape):

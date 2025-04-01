@@ -16,6 +16,8 @@ from tensorflow.keras.callbacks import (
 )
 from keras.layers import Dense
 import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report
+from keras.models import load_model
 
 
 class ModelTrainer:
@@ -134,23 +136,33 @@ class ModelTrainer:
         )
 
         # In ra các kết quả đánh giá
-        model_results = "========KET QUA MO HINH TOT NHAT================\n"
+        best_model_results = "========KET QUA CUA MO HINH TOT NHAT================\n"
+        best_model_results = "CAC CHI SO DANH GIA:\n"
 
         for key, value in results.items():
-            model_results += f"- {key}: {value}\n"
+            best_model_results += f"- {key}: {value}\n"
 
-        model_results += (
+        best_model_results += (
             f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
         )
 
-        model_results += "CLASSIFICATION REPORT\n"
+        best_model_results += "\nCLASSIFICATION REPORT\n"
+        train_classification_report = self.get_classification_report_for_best_model(
+            self.train_ds
+        )
+        val_classification_report = self.get_classification_report_for_best_model(
+            self.val_ds
+        )
+        best_model_results += "Train: \n"
+        best_model_results += train_classification_report + "\n\n"
+        best_model_results += "Val: \n"
+        best_model_results += val_classification_report + "\n\n"
 
-        # Ghi kết quả các chỉ số vào file results.txt
-
+        # Ghi kết quả đánh giá vào file results.txt
         with open(self.config.results_path, mode="w") as file:
-            file.write(model_results)
+            file.write(best_model_results)
 
-        # Lưu các biểu đồ per epoch cho từng chỉ số
+        # Lưu các biểu đồ per epoch cho từng chỉ số (mỗi epoch là 1 model riêng)
         epochs = range(1, num_epochs + 1)
         epochs = [str(i) for i in epochs]
 
@@ -171,7 +183,30 @@ class ModelTrainer:
         # Lưu cấu trúc của model
         keras.utils.plot_model(self.model, self.config.structure_path, show_shapes=True)
 
-    # def get_classif
+    def get_classification_report_for_best_model(self, ds):
+        y_true = []
+        y_pred = []
+
+        class_names = np.asarray(self.config.class_names)
+
+        # Lấy model tốt nhất
+        self.best_model = load_model(self.config.best_model_path)
+
+        # Lặp qua các batch trong train_ds
+        for images, y_true_batch in ds:
+            # Dự đoán bằng mô hình
+            predictions = self.best_model.predict(
+                images, batch_size=self.config.batch_size
+            )
+
+            y_pred_batch = class_names[np.argmax(predictions, axis=-1)]
+
+            # Thêm vào danh sách
+            y_true.append(y_true_batch)
+            y_pred.append(y_pred_batch)
+
+        # In ra báo cáo phân loại
+        return classification_report(y_true, y_pred)
 
     def save_list_monitor_components(self):
         if self.config.is_first_time == "f":
