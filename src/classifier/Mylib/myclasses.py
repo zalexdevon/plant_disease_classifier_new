@@ -47,9 +47,6 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         self.filters = filters
 
     def build(self, input_shape):
-        print(
-            "============== Build class ConvNetBlock_XceptionVersion ================="
-        )
 
         self.BatchNormalization = layers.BatchNormalization()
         self.Activation = layers.Activation("relu")
@@ -88,8 +85,6 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
         residual = self.Conv2D(residual)
         x = layers.add([x, residual])
 
-        print("============= Call class ConvNetBlock_XceptionVersion ===============")
-
         return x
 
     def get_config(self):
@@ -124,8 +119,6 @@ class ConvNetBlock_Advanced(layers.Layer):
         self.filters = filters
         self.pooling = pooling
 
-        print("===========Khởi tạo thành công ============")
-
     def build(self, input_shape):
 
         self.BatchNormalization = layers.BatchNormalization()
@@ -143,8 +136,6 @@ class ConvNetBlock_Advanced(layers.Layer):
         self.Conv2D_3 = layers.Conv2D(self.filters, 1)
 
         super().build(input_shape)
-
-        print("============== Build class ConvNetBlock_Advanced =================")
 
     def call(self, x):
         residual = x
@@ -172,8 +163,6 @@ class ConvNetBlock_Advanced(layers.Layer):
 
         # Apply residual connection
         x = layers.add([x, residual])
-
-        print("============= Call class ConvNetBlock_Advanced ===============")
 
         return x
 
@@ -222,15 +211,11 @@ class ConvNetBlock(layers.Layer):
 
         super().build(input_shape)
 
-        print("============== Build class ConvNetBlock =================")
-
     def call(self, x):
         for conv2D in self.list_Conv2D:
             x = conv2D(x)
 
         x = self.MaxPooling2D(x)
-
-        print("============= Call class ConvNetBlock ===============")
 
         return x
 
@@ -276,18 +261,10 @@ class ImageDataPositionAugmentation(layers.Layer):
 
         super().build(input_shape)
 
-        print(
-            "============== Build class ImageDataPositionAugmentation đã xong =================="
-        )
-
     def call(self, x):
         x = self.RandomFlip(x)
         x = self.RandomRotation(x)
         x = self.RandomZoom(x)
-
-        print(
-            "============= Call class ImageDataPositionAugmentation đã xong  ==============="
-        )
 
         return x
 
@@ -360,18 +337,12 @@ class ImageDataColorAugmentation(layers.Layer):
 
         super().build(input_shape)
 
-        print(
-            "============== Build class ImageDataColorAugmentation đã xong =================="
-        )
-
     def call(self, x):
         x = self.RandomBrightness(x)
         x = self.RandomGaussianBlur(x)  # Lớp này để mặc định
         x = self.RandomContrast(x)
         x = self.RandomHue(x)
         x = self.RandomSaturation(x)
-
-        print("============= Call class ImageDataColorAugmentation ===============")
 
         return x
 
@@ -439,11 +410,8 @@ class PretrainedModel(layers.Layer):
 
         super().build(input_shape)
 
-        print("============= Build class PretrainedModel ===============")
-
     def call(self, x):
         x = self.preprocess_input(x)
         x = self.model(x)
 
-        print("============= Call class PretrainedModel ===============")
         return x

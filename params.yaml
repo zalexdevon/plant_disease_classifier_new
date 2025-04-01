@@ -6,7 +6,7 @@ batch_size: 32
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_36
+      model_name: CONVNET_37
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=1, min_delta=1)
@@ -23,8 +23,8 @@ model_trainer:
 
             # Convnet 
             - ConvNetBlock(filters = 32)
-            - ConvNetBlock_Advanced(filters = 64)
-            - ConvNetBlock_XceptionVersion(filters = 128, name='last_convnet')
+            # - ConvNetBlock_Advanced(filters = 64)
+            # - ConvNetBlock_XceptionVersion(filters = 128, name='last_convnet')
 
             # Classifier
             - Flatten()

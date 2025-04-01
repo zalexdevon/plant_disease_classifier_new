@@ -230,10 +230,13 @@ class ModelTrainer:
 
         # TODO: d
         print("Kết thúc lặp qua từng batch")
+
+        print(f"y_true: {y_true}\n")
+        print(f"y_pred: {y_pred}\n")
         # d
 
         # In ra báo cáo phân loại
-        return classification_report(y_true, y_pred)
+        return classification_report(y_true, y_pred)  # Lỗi chỗ này rồi
 
     def save_list_monitor_components(self):
         if self.config.is_first_time == "f":
