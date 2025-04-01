@@ -222,8 +222,8 @@ class ModelTrainer:
                 images, batch_size=self.config.batch_size, verbose=0
             )
 
-            y_pred_batch = class_names[np.argmax(predictions, axis=-1)]
-            y_true_batch = class_names[np.asarray(labels)]
+            y_pred_batch = class_names[np.argmax(predictions, axis=-1)].tolist()
+            y_true_batch = class_names[np.asarray(labels)].tolist()
 
             # Thêm vào danh sách
             y_true += y_true_batch
