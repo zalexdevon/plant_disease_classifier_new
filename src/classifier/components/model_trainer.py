@@ -155,14 +155,14 @@ class ModelTrainer:
             train_classification_report = self.get_classification_report_for_best_model(
                 self.train_ds
             )
+            # TODO: d
+            print("train_classification_report thành công !!!!!")
+            # d
             val_classification_report = self.get_classification_report_for_best_model(
                 self.val_ds
             )
-
             # TODO: d
-            print("train_classification_report: \n" + train_classification_report)
-            print()
-            print("val_classification_report: \n" + val_classification_report)
+            print("val_classification_report thành công !!!!!")
             # d
 
             best_model_results += "Train: \n"
@@ -171,10 +171,9 @@ class ModelTrainer:
             best_model_results += val_classification_report + "\n\n"
 
             print(best_model_results)
+
         except Exception as e:
             print(f"Lỗi : {e}")
-
-        print("CLASSIFICATION REPORT thành công !!!!!!")
 
         # Ghi kết quả đánh giá vào file results.txt
         with open(self.config.results_path, mode="w") as file:
@@ -209,12 +208,18 @@ class ModelTrainer:
 
         # Lấy model tốt nhất
         self.best_model = load_model(self.config.best_model_path)
+        # TODO: d
+        print("load model thành công !!!!")
+        # d
 
         # Lặp qua các batch trong train_ds
+        # TODO: d
+        print("Lặp qua từng batch")
+        # d
         for images, y_true_batch in ds:
             # Dự đoán bằng mô hình
             predictions = self.best_model.predict(
-                images, batch_size=self.config.batch_size
+                images, batch_size=self.config.batch_size, verbose=0
             )
 
             y_pred_batch = class_names[np.argmax(predictions, axis=-1)]
@@ -222,6 +227,10 @@ class ModelTrainer:
             # Thêm vào danh sách
             y_true.append(y_true_batch)
             y_pred.append(y_pred_batch)
+
+        # TODO: d
+        print("Kết thúc lặp qua từng batch")
+        # d
 
         # In ra báo cáo phân loại
         return classification_report(y_true, y_pred)
