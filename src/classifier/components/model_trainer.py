@@ -146,6 +146,10 @@ class ModelTrainer:
             f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
         )
 
+        # TODO: d
+        print("Buocwcs vào CLASSIFICATION REPORT")
+        # d
+
         try:
             best_model_results += "\nCLASSIFICATION REPORT\n"
             train_classification_report = self.get_classification_report_for_best_model(
@@ -168,7 +172,9 @@ class ModelTrainer:
 
             print(best_model_results)
         except Exception as e:
-            print("Lỗi : " + e)
+            print(f"Lỗi : {e}")
+
+        print("CLASSIFICATION REPORT thành công !!!!!!")
 
         # Ghi kết quả đánh giá vào file results.txt
         with open(self.config.results_path, mode="w") as file:
