@@ -56,6 +56,12 @@ class ModelTrainer:
         for layer in self.config.layers[1:]:
             x = layer(x)
 
+        # TODO: d
+        print("Tên các layer: \n")
+        for layer in self.config.layers[1:]:
+            print(layer.name)
+        # d
+
         self.model = keras.Model(inputs=inputs, outputs=x)
 
         self.model.compile(
