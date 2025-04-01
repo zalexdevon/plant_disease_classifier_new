@@ -18,6 +18,9 @@ from keras.layers import Dense
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 from keras.models import load_model
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 
 
 class ModelTrainer:
