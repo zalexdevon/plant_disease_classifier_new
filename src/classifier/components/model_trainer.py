@@ -216,17 +216,18 @@ class ModelTrainer:
         # TODO: d
         print("Lặp qua từng batch")
         # d
-        for images, y_true_batch in ds:
+        for images, labels in ds:
             # Dự đoán bằng mô hình
             predictions = self.best_model.predict(
                 images, batch_size=self.config.batch_size, verbose=0
             )
 
             y_pred_batch = class_names[np.argmax(predictions, axis=-1)]
+            y_true_batch = class_names[np.asarray(labels)]
 
             # Thêm vào danh sách
-            y_true.append(y_true_batch)
-            y_pred.append(y_pred_batch)
+            y_true += y_true_batch
+            y_pred += y_pred_batch
 
         # TODO: d
         print("Kết thúc lặp qua từng batch")
