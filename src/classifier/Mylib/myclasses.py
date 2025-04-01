@@ -521,3 +521,32 @@ class GradCAMForImages:
         list_superimposed_img = [self.convert_1image(img) for img in self.images]
 
         return list_superimposed_img
+
+
+class ImagesToArrayConverter:
+    """Chuyển 1 tập ảnh thành 1 mảng numpy
+
+    Attributes:
+        image_paths (list): Tập các đường dẫn đến các file ảnh
+        target_size (int): Kích thước sau khi resize
+    """
+
+    def __init__(self, image_paths, target_size):
+
+        self.image_paths = image_paths
+        self.target_size = (target_size, target_size)
+
+    def convert_1image(self, img_path):
+        img = keras.utils.load_img(
+            img_path, target_size=self.target_size
+        )  # load ảnh và resize luôn
+        array = keras.utils.img_to_array(img)  # Chuyển img sang array
+        array = np.expand_dims(
+            array, axis=0
+        )  # Thêm chiều để tạo thành mảng có 1 phần tử
+        return array
+
+    def convert(self):
+        return np.vstack(
+            [self.convert_1image(img_path) for img_path in self.image_paths]
+        )
