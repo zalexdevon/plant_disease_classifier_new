@@ -92,6 +92,17 @@ class ConvNetBlock_XceptionVersion(layers.Layer):
 
         return x
 
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update({"filters": self.filters})
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
+
 
 class ConvNetBlock_Advanced(layers.Layer):
     """Gồm các layers sau:
@@ -165,6 +176,22 @@ class ConvNetBlock_Advanced(layers.Layer):
 
         return x
 
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update(
+            {
+                "filters": self.filters,
+                "pooling": self.pooling,
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
+
 
 class ConvNetBlock(layers.Layer):
     """Kết hợp các layers sau:
@@ -205,6 +232,22 @@ class ConvNetBlock(layers.Layer):
 
         return x
 
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update(
+            {
+                "filters": self.filters,
+                "num_Conv2D": self.num_Conv2D,
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
+
 
 class ImageDataPositionAugmentation(layers.Layer):
     """Tăng cường dữ liệu hình ảnh ở khía cạnh vị trí, bao gồm các lớp sau (**trong tf.keras.layers**)
@@ -244,6 +287,22 @@ class ImageDataPositionAugmentation(layers.Layer):
         )
 
         return x
+
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update(
+            {
+                "rotation_factor": self.rotation_factor,
+                "zoom_factor": self.zoom_factor,
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
 
 
 class ImageDataColorAugmentation(layers.Layer):
@@ -310,6 +369,24 @@ class ImageDataColorAugmentation(layers.Layer):
         print("============= Call class ImageDataColorAugmentation ===============")
 
         return x
+
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update(
+            {
+                "brightness_factor": self.brightness_factor,
+                "contrast_factor": self.contrast_factor,
+                "hue_factor": self.hue_factor,
+                "saturation_factor": self.saturation_factor,
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
 
 
 class PretrainedModel(layers.Layer):
