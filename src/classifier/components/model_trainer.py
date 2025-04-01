@@ -139,10 +139,11 @@ class ModelTrainer:
         for key, value in results.items():
             model_results += f"- {key}: {value}\n"
 
-        model_results += f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
+        model_results += (
+            f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
+        )
 
         model_results += "CLASSIFICATION REPORT\n"
-
 
         # Ghi kết quả các chỉ số vào file results.txt
 
@@ -170,7 +171,7 @@ class ModelTrainer:
         # Lưu cấu trúc của model
         keras.utils.plot_model(self.model, self.config.structure_path, show_shapes=True)
 
-    def get_classif
+    # def get_classif
 
     def save_list_monitor_components(self):
         if self.config.is_first_time == "f":
