@@ -14,7 +14,7 @@ class DataIntoBatchesSplitterPipeline:
 
     def main(self):
         config = ConfigurationManager()
-        config = config.get_model_trainer_config()
+        config = config.get_data_into_batches_splitter_config()
         obj = DataIntoBatchesSplitter(config=config)
 
         try:

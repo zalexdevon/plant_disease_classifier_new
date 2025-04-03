@@ -9,6 +9,7 @@ from classifier import logger
 from classifier.components.monitor_plotter import (
     MonitorPlotter,
 )
+import traceback
 
 STAGE_NAME = "Model Training stage"
 
@@ -48,7 +49,8 @@ class ModelTrainerPipeline:
             print("================ NO ERORR :)))))))))) ==========================")
 
         except Exception as e:
-            print(f"===========ERROR mất rồi !!!!!!!!!! =================\n{e}")
+            print(f"==========ERROR: =============")
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
