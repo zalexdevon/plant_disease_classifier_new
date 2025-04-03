@@ -6,7 +6,6 @@ stages:
             outs: 
                   - artifacts/data_into_batches_splitter
             
-
       model_trainer:
             cmd: python src/classifier/pipeline/stage_04_model_training.py
             deps:

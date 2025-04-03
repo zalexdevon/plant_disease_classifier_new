@@ -15,7 +15,7 @@ replace_dict = {
 }
 
 sub_param_for_yaml_file("config_p.yaml", "config.yaml", replace_dict)
-# sub_param_for_yaml_file("dvc_p.yaml", "dvc.yaml", replace_dict)
+sub_param_for_yaml_file("dvc_p.yaml", "dvc.yaml", replace_dict)
 
 stage_name = sys.argv[1]
 os.system(f"dvc repro {stage_name}")
