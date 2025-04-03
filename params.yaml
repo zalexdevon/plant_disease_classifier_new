@@ -1,7 +1,7 @@
 # COMMON
 scoring: accuracy
 image_size: 256
-batch_size: 64
+batch_size: 16
 metrics: 
       - accuracy
 

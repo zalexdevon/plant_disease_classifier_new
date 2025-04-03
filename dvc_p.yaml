@@ -3,6 +3,8 @@ stages:
             cmd: python src/classifier/pipeline/stage_03_data_into_batches_splitter.py
             params:
                   - data_into_batches_splitter 
+                  - batch_size
+                  - image_size
             outs: 
                   - artifacts/data_into_batches_splitter
             
@@ -12,6 +14,7 @@ stages:
                   - artifacts/data_into_batches_splitter
             params:
                   - model_trainer 
+                  - batch_size
 
       model_evaluation:
             cmd: python src/classifier/pipeline/stage_05_model_evaluation.py
