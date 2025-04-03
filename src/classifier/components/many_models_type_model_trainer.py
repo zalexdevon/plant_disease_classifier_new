@@ -99,7 +99,6 @@ class ManyModelsTypeModelTrainer:
         )
 
         for model, callbacks in zip(self.models, self.list_callbacks):
-
             print("====== Tiến hành train 1 model ==========")
             self.history = model.fit(
                 self.train_ds,
