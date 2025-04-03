@@ -1,6 +1,7 @@
 from classifier.constants import *
 from classifier.Mylib.myfuncs import read_yaml, create_directories
 from classifier.entity.config_entity import (
+    DataIntoBatchesSplitterConfig,
     ModelTrainerConfig,
     ModelEvaluationConfig,
     MonitorPlotterConfig,
@@ -21,51 +22,69 @@ class ConfigurationManager:
 
         create_directories([self.config.artifacts_root])
 
+    # DATA INTO BATCHES SPLITTER
+    def get_data_into_batches_splitter_config(self) -> DataIntoBatchesSplitterConfig:
+        config = self.config.data_into_batches_splitter
+        params = self.params.data_into_batches_splitter
+
+        create_directories([config.root_dir])
+
+        obj = DataIntoBatchesSplitterConfig(
+            # config input
+            folder_path=config.folder_path,
+            # config output
+            root_dir=config.root_dir,
+            class_names_path=config.class_names_path,
+            train_ds_path=config.train_ds_path,
+            val_ds_path=config.val_ds_path,
+            test_ds_path=config.test_ds_path,
+            # params
+            train_size=params.train_size,
+            val_size=params.val_size,
+            # common params
+            image_size=self.params.image_size,
+            batch_size=self.params.batch_size,
+        )
+
+        return obj
+
     def get_model_trainer_config(
         self,
     ) -> ModelTrainerConfig:
         config = self.config.model_trainer
         params = self.params.model_trainer
 
-        create_directories([config.root_dir, config.root_logs_dir])
-
-        list_callbacks = [
-            myfuncs.get_object_from_string_4(callback) for callback in params.callbacks
-        ]
-
-        list_layers = [
-            myfuncs.get_object_from_string_4(layer) for layer in params.layers
-        ]
-
-        class_names = myfuncs.load_python_object(config.class_names_path)
-
-        optimizer = myfuncs.get_object_from_string_4(params.optimizer)
+        create_directories(
+            [config.root_dir, config.root_logs_dir, config.best_models_in_training_dir]
+        )
 
         model_trainer_config = ModelTrainerConfig(
-            # config
+            # config input
             train_ds_path=config.train_ds_path,
             val_ds_path=config.val_ds_path,
-            class_names=class_names,
+            class_names_path=config.class_names_path,
+            # config output
             root_dir=config.root_dir,
             root_logs_dir=config.root_logs_dir,
+            best_models_in_training_dir=config.best_models_in_training_dir,
             best_model_path=config.best_model_path,
             results_path=config.results_path,
-            structure_path=config.structure_path,
+            model_structure_path=config.model_structure_path,
             list_monitor_components_path=config.list_monitor_components_path,
             # params
             is_first_time=params.is_first_time,
             model_name=params.model_name,
             epochs=params.epochs,
-            callbacks=list_callbacks,
-            layers_in_string=params.layers,
-            layers=list_layers,
-            optimizer=optimizer,
+            callbacks=params.callbacks,
+            model_training_type=params.model_training_type,
+            list_layers=params.list_layers,
+            optimizer=params.optimizer,
             loss=params.loss,
-            metrics=params.metrics,
             # common params
             scoring=self.params.scoring,
             image_size=self.params.image_size,
             batch_size=self.params.batch_size,
+            metrics=self.params.metrics,
         )
 
         return model_trainer_config
@@ -75,13 +94,16 @@ class ConfigurationManager:
         config = self.config.model_evaluation
 
         obj = ModelEvaluationConfig(
-            test_data_path=config.test_data_path,
-            preprocessor_path=config.preprocessor_path,
+            # config input
+            test_ds_path=config.test_ds_path,
+            class_names_path=config.class_names_path,
             model_path=config.model_path,
-            result=config.result,
-            target_col=config.target_col,
-            metric=config.metric,
-            evaluated_model_name=config.evaluated_model_name,
+            # config output
+            root_dir=config.root_dir,
+            results_path=config.results_path,
+            # common params
+            metrics=self.params.metrics,
+            batch_size=self.params.batch_size,
         )
 
         return obj

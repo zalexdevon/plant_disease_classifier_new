@@ -1,13 +1,20 @@
 stages: 
+      data_into_batches_splitter:
+            cmd: python src/classifier/pipeline/stage_03_data_into_batches_splitter.py
+            params:
+                  - data_into_batches_splitter 
+            outs: 
+                  - artifacts/data_into_batches_splitter
+            
+
       model_trainer:
             cmd: python src/classifier/pipeline/stage_04_model_training.py
             deps:
-                  - artifacts/data_ingestion
+                  - artifacts/data_into_batches_splitter
             params:
                   - model_trainer 
 
       model_evaluation:
             cmd: python src/classifier/pipeline/stage_05_model_evaluation.py
             params:
-                  - evaluated_data_transformation
-                  - evaluated_model_name
+                  - model_evaluation

@@ -14,6 +14,7 @@ class ModelEvaluationPipeline:
         config = ConfigurationManager()
         model_evaluation_config = config.get_model_evaluation_config()
         eval = ModelEvaluation(config=model_evaluation_config)
+        eval.load_data_to_test()
         eval.evaluate_model()
 
 

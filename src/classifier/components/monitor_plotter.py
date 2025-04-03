@@ -12,9 +12,11 @@ class MonitorPlotter:
         self.config = config
 
     def plot(self, monitor):
+        # Lấy các thành phần cần thiết
         model_name = [item[0] for item in monitor]
         train_scores = [item[1] for item in monitor]
         val_scores = [item[2] for item in monitor]
+        results = [item[3] for item in monitor]
 
         for i in range(len(train_scores)):
             if train_scores[i] > self.config.max_val_value:
@@ -43,7 +45,7 @@ class MonitorPlotter:
                 "train": "gray",
                 "val": "blue",
             },
-            hover_data={"x": False, "Category": False},
+            hovertemplate="%{y}<br><br>" + results,
         )
 
         for i in range(len(x_values)):

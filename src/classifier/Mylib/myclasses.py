@@ -111,14 +111,11 @@ class ConvNetBlock_Advanced(layers.Layer):
 
     Attributes:
         filters (_type_): số lượng filters trong lớp Conv2D
-        pooling (bool, optional): Có lớp MaxPooling2D không. Defaults to True.
     """
 
-    def __init__(self, filters, pooling=True, **kwargs):
-        # super(ConvNetBlock_Advanced, self).__init__()
+    def __init__(self, filters, **kwargs):
         super().__init__(**kwargs)
         self.filters = filters
-        self.pooling = pooling
 
     def build(self, input_shape):
 
@@ -129,12 +126,9 @@ class ConvNetBlock_Advanced(layers.Layer):
         self.BatchNormalization_1 = layers.BatchNormalization()
         self.Activation_1 = layers.Activation("relu")
         self.Conv2D_1 = layers.Conv2D(self.filters, 3, padding="same")
-
         self.MaxPooling2D = layers.MaxPooling2D(2, padding="same")
 
         self.Conv2D_2 = layers.Conv2D(self.filters, 1, strides=2)
-
-        self.Conv2D_3 = layers.Conv2D(self.filters, 1)
 
         super().build(input_shape)
 
@@ -150,17 +144,10 @@ class ConvNetBlock_Advanced(layers.Layer):
         x = self.BatchNormalization_1(x)
         x = self.Activation_1(x)
         x = self.Conv2D_1(x)
+        x = self.MaxPooling2D(x)
 
-        # Có dùng MaxPooling2D không
-        if self.pooling:
-            x = self.MaxPooling2D(x)
-            residual = self.Conv2D_2(
-                residual
-            )  # Có dùng max pooling thì kèm cái này thôi
-        elif self.filters != residual.shape[-1]:
-            residual = self.Conv2D_3(
-                residual
-            )  # Nếu không dùng max pooling thì kèm cái này
+        # Xử lí residual
+        residual = self.Conv2D_2(residual)
 
         # Apply residual connection
         x = layers.add([x, residual])
@@ -173,7 +160,6 @@ class ConvNetBlock_Advanced(layers.Layer):
         config.update(
             {
                 "filters": self.filters,
-                "pooling": self.pooling,
             }
         )
         return config
@@ -181,7 +167,6 @@ class ConvNetBlock_Advanced(layers.Layer):
     @classmethod
     def from_config(cls, config):
         # Giải mã lại lớp từ cấu hình
-        name = config.pop("name", None)
         return cls(**config)
 
 
@@ -234,12 +219,6 @@ class ConvNetBlock(layers.Layer):
     @classmethod
     def from_config(cls, config):
         return cls(**config)
-
-    # TODO: d
-    def print(self):
-        print("Ok roi !!!!!!")
-
-    # d
 
 
 class ImageDataPositionAugmentation(layers.Layer):
@@ -425,9 +404,35 @@ class PretrainedModel(layers.Layer):
 class GradCAMForImages:
     """Thực hiện quá trình GradCAM để xác định những phần nảo của ảnh hỗ trợ model phân loại nhiều nhất
     Attributes:
-        images (_type_): Tập ảnh đã được chuyển thành **array**
+        images (np.ndarray): Tập ảnh đã được chuyển thành **array**
         model (_type_): model
-        last_convnet_layer_name (_type_): **Tên** hoặc  **index** của layer convent cuối cùng trong model
+        last_convnet_layer_name ([str, int]): **Tên** hoặc  **index** của layer convent cuối cùng trong model
+
+    Hàm -> **convert()**
+
+    Returns:
+        list_superimposed_img (list[PIL.Image.Image]): 1 mảng
+
+    Examples:
+        Nhấn mạnh những phần trên ảnh giúp phân loại các lá -> 3 loại: healthy, early_blight, late_blight
+        ```python
+        # Lấy đường dẫn của các ảnh
+        img_paths = [os.path.join(folder, file) for file in file_names]
+
+        # Chuyển các ảnh thành các mảng numpy
+        file_names_array = myclasses.ImagesToArrayConverter(image_paths=img_paths, target_size=256).convert()
+
+        # Load model
+        model = load_model("artifacts/model_trainer/CONVNET_45/best_model.keras")
+        last_convnet_index = int(3) # Specify lớp convnet cuối cùng (thông qua chỉ số), mà cũng nên dùng chỉ số đi :))))
+
+        # Kết quả thu được là 1 mảng các PIL.Image.Image
+        result = myclasses.GradCAMForImages(file_names_array, model, last_convnet_index).convert()
+
+        # Show các ảnh lên
+        for image in result:
+            plt.imshow(image)
+        ```
     """
 
     def __init__(self, images, model, last_convnet_layer_name):
@@ -498,6 +503,7 @@ class GradCAMForImages:
         return heatmap
 
     def convert_1image(self, img, heatmap):
+
         heatmap = np.uint8(255 * heatmap)
 
         jet = cm.get_cmap("jet")  # Dùng "jet" để tô màu lại heatmap
@@ -526,11 +532,16 @@ class GradCAMForImages:
 
 
 class ImagesToArrayConverter:
-    """Chuyển 1 tập ảnh thành 1 mảng numpy
+    """Chuyển 1 tập ảnh  thành 1 mảng numpy
 
     Attributes:
         image_paths (list): Tập các đường dẫn đến các file ảnh
         target_size (int): Kích thước sau khi resize
+
+    Hàm -> convert()
+
+    Returns:
+        result (np.ndarray):
     """
 
     def __init__(self, image_paths, target_size):
@@ -552,3 +563,141 @@ class ImagesToArrayConverter:
         return np.vstack(
             [self.convert_1image(img_path) for img_path in self.image_paths]
         )
+
+
+class ManyConvNetBlocks_XceptionVersion(layers.Layer):
+    """Gồm nhiều khối **ConvNetBlocks_XceptionVersion**
+
+    Với list_filters = [32, 64, 128, 256] -> bao gồm các layers:
+
+    - ConvNetBlocks_XceptionVersion(filters = 32)
+    - ConvNetBlocks_XceptionVersion(filters = 64)
+    - ConvNetBlocks_XceptionVersion(filters = 128)
+    - ConvNetBlocks_XceptionVersion(filters = 256)
+
+    Attributes:
+        list_filters (list[int]): các filters ứng với từng block **ConvNetBlocks_XceptionVersion**
+    """
+
+    def __init__(self, list_filters, **kwargs):
+        super().__init__(**kwargs)
+        self.list_filters = list_filters
+
+    def build(self, input_shape):
+        self.list_ConvNetBlocks = [
+            ConvNetBlock_XceptionVersion(filters=filters)
+            for filters in self.list_filters
+        ]
+
+        super().build(input_shape)
+
+    def call(self, x):
+        for convNetBlocks in self.list_ConvNetBlocks:
+            x = convNetBlocks(x)
+
+        return x
+
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update({"list_filters": self.list_filters})
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
+
+
+class ManyConvNetBlocks_Advanced(layers.Layer):
+    """Gồm nhiều block **ConvNetBlocks_Advanced**
+
+    Attributes:
+        list_filters (list[int]): list các filters ứng với từng block
+    """
+
+    def __init__(self, list_filters, **kwargs):
+        super().__init__(**kwargs)
+        self.list_filters = list_filters
+
+    def build(self, input_shape):
+        self.list_ConvNetBlocks = [
+            ConvNetBlock_Advanced(filters=filters) for filters in self.list_filters
+        ]
+
+        super().build(input_shape)
+
+    def call(self, x):
+        for convNetBlocks in self.list_ConvNetBlocks:
+            x = convNetBlocks(x)
+
+        return x
+
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update(
+            {
+                "list_filters": self.list_filters,
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        # Giải mã lại lớp từ cấu hình
+        return cls(**config)
+
+
+class ManyConvNetBlock(layers.Layer):
+    """Gồm nhiều block **ConvNetBlock**
+
+    Attributes:
+        list_filters (list[int]):
+        list_num_Conv2D (list[int], optional): Defaults to all 1.
+    """
+
+    def __init__(self, list_filters, list_num_Conv2D=None, **kwargs):
+        """ """
+        # super(ConvNetBlock, self).__init__()
+        super().__init__(**kwargs)
+        self.list_filters = list_filters
+        self.list_num_Conv2D = list_num_Conv2D
+
+    def build(self, input_shape):
+        if self.list_num_Conv2D is None:
+            self.list_ConvNetBlocks = [
+                ConvNetBlock(filters=filters) for filters in self.list_filters
+            ]
+        elif len(self.list_filters) != len(self.list_num_Conv2D):
+            raise ValueError(
+                "====== Độ dài của tham số list_filters và list_num_Conv2D phải như nhau ========="
+            )
+        else:
+            self.list_ConvNetBlocks = [
+                ConvNetBlock(filters=filters, num_Conv2D=num_Conv2D)
+                for filters, num_Conv2D in zip(self.list_filters, self.list_num_Conv2D)
+            ]
+
+        super().build(input_shape)
+
+    def call(self, x):
+        for convNetBlocks in self.list_ConvNetBlocks:
+            x = convNetBlocks(x)
+
+        return x
+
+    def get_config(self):
+        # Trả về cấu hình của lớp tùy chỉnh
+        config = super().get_config()
+        config.update(
+            {
+                "list_filters": self.list_filters,
+                "list_num_Conv2D": self.list_num_Conv2D,
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)

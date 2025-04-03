@@ -2,6 +2,9 @@ from classifier.config.configuration import ConfigurationManager
 from classifier.components.model_trainer import (
     ModelTrainer,
 )
+from classifier.components.many_models_type_model_trainer import (
+    ManyModelsTypeModelTrainer,
+)
 from classifier import logger
 from classifier.components.monitor_plotter import (
     MonitorPlotter,
@@ -17,7 +20,12 @@ class ModelTrainerPipeline:
     def main(self):
         config = ConfigurationManager()
         model_trainer_config = config.get_model_trainer_config()
-        model_trainer = ModelTrainer(config=model_trainer_config)
+
+        model_trainer = None
+        if model_trainer_config.model_training_type == "o":
+            model_trainer = ModelTrainer(config=model_trainer_config)
+        else:
+            model_trainer = ManyModelsTypeModelTrainer(config=model_trainer_config)
 
         try:
             model_trainer.load_data_to_train()
@@ -26,10 +34,10 @@ class ModelTrainerPipeline:
             print("\n===== Load callbacks thành công ====== \n")
             model_trainer.load_model()
             print("\n===== Load model thành công ====== \n")
-            model_trainer.train()
+            model_trainer.train_tfDataset()
             print("\n===== Train thành công ====== \n")
-            model_trainer.save_model()
-            print("\n===== Save model thành công ====== \n")
+            model_trainer.save_best_model_results()
+            print("\n===== Save best model thành công ====== \n")
             model_trainer.save_list_monitor_components()
             print("\n===== Save kết quả các lần chạy model thành công ====== \n")
 

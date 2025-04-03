@@ -1,23 +1,40 @@
 artifacts_root: artifacts
 
+data_into_batches_splitter: 
+      # input 
+      folder_path: data/PlantVillageData 
+
+      # output 
+      root_dir: artifacts/data_into_batches_splitter
+      class_names_path: artifacts/data_into_batches_splitter/class_names.pkl
+      train_ds_path: artifacts/data_into_batches_splitter/train_ds
+      val_ds_path: artifacts/data_into_batches_splitter/val_ds
+      test_ds_path: artifacts/data_into_batches_splitter/test_ds
+
+
 model_trainer:
-      # Dữ liệu
-      train_ds_path: artifacts/data_ingestion/train_ds
-      val_ds_path: artifacts/data_ingestion/val_ds
-      class_names_path: artifacts/data_ingestion/class_names.pkl
+      # input
+      train_ds_path: artifacts/data_into_batches_splitter/train_ds
+      val_ds_path: artifacts/data_into_batches_splitter/val_ds
+      class_names_path: artifacts/data_into_batches_splitter/class_names.pkl
       
-      # Model
+      # output
       root_dir: artifacts/model_trainer/${T}
-      root_logs_dir: artifacts/logs/${T}
+      root_logs_dir: artifacts/model_trainer/logs/${T}
+      best_models_in_training_dir: artifacts/model_trainer/${T}/best_models_in_training
       best_model_path: artifacts/model_trainer/${T}/best_model.keras
       results_path: artifacts/model_trainer/${T}/results.txt
-      structure_path: artifacts/model_trainer/${T}/structure.png
+      model_structure_path: artifacts/model_trainer/${T}/model_structure.png
       list_monitor_components_path: artifacts/model_trainer/list_monitor_components.pkl
 
 
 
 model_evaluation:
-      test_data_path: artifacts/data_correction_1/test_data.pkl
+      # input 
+      test_ds_path: artifacts/data_into_batches_splitter/test_ds
+      class_names_path: artifacts/data_into_batches_splitter/class_names.pkl
+      model_path: artifacts/model_trainer/${E}/best_model.keras
 
-      model_path: artifacts/model_trainer/${E}/best_model.pkl
-      result: artifacts/test_model_results.txt
+      # output 
+      root_dir: artifacts/model_evaluation/${E}
+      results_path: artifacts/model_evaluation/${E}/results.txt

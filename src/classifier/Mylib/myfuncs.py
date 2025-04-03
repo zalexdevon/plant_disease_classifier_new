@@ -36,6 +36,8 @@ from tensorflow.keras.layers import (
     MaxPooling2D,
     Flatten,
     Dense,
+    GlobalAveragePooling2D,
+    Dropout,
 )
 
 from tensorflow.keras.optimizers import RMSprop
@@ -49,10 +51,14 @@ from classifier.Mylib.myclasses import (
     ImageDataPositionAugmentation,
     ImageDataColorAugmentation,
     PretrainedModel,
+    ManyConvNetBlocks_XceptionVersion,
+    ManyConvNetBlocks_Advanced,
+    ManyConvNetBlock,
 )
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from PIL import Image
 
 
 def get_sum(a, b):
@@ -757,8 +763,8 @@ def get_describe_stats_for_numeric_cat_cols(data):
 
 def split_tfdataset_into_tranvaltest_1(
     ds: tf.data.Dataset,
-    train_split=0.8,
-    val_split=0.1,
+    train_size=0.8,
+    val_size=0.1,
     shuffle=True,
     shuffle_size=10000,
 ):
@@ -766,8 +772,8 @@ def split_tfdataset_into_tranvaltest_1(
 
     Args:
         ds (tf.data.Dataset): _description_
-        train_split (float, optional): _description_. Defaults to 0.8.
-        val_split (float, optional): _description_. Defaults to 0.1.
+        train_size (float, optional): _description_. Defaults to 0.8.
+        val_size (float, optional): _description_. Defaults to 0.1.
         shuffle (bool, optional): _description_. Defaults to True.
         shuffle_size (int, optional): _description_. Defaults to 10000.
 
@@ -779,8 +785,8 @@ def split_tfdataset_into_tranvaltest_1(
     if shuffle:
         ds = ds.shuffle(shuffle_size, seed=42)
 
-    train_size = int(train_split * ds_size)
-    val_size = int(val_split * ds_size)
+    train_size = int(train_size * ds_size)
+    val_size = int(val_size * ds_size)
 
     train_ds = ds.take(train_size)
     val_ds = ds.skip(train_size).take(val_size)
@@ -814,8 +820,8 @@ def train_test_split_tfdataset_3(
     return train_ds, test_ds
 
 
-def get_object_from_string_4(text: str):
-    """Get đối tượng từ 1 chuối
+def convert_string_to_object_4(text: str):
+    """Chuyển 1 chuỗi thành 1 đối tượng
 
     Example:
         text = "LogisticRegression(C=144, penalty=l1, solver=saga,max_iter=10000,dual=True)"
@@ -880,13 +886,13 @@ def get_object_from_string_using_eval_6(text: str, module):
 def do_ast_literal_eval_advanced_7(text: str):
     """Kế thừa hàm ast.literal_eval() nhưng xử lí thêm trường hợp sau
 
-    Tuple dạng (1.0 ; 2.0), các phần tử cách nhau bởi dấu ; thay vì dấu ,
+    Tuple, List dạng (1.0 ; 2.0), các phần tử cách nhau bởi dấu ; thay vì dấu ,
+
     """
     if ";" not in text:
         return ast.literal_eval(text)
 
-    items = text.strip(r"()").split(";")
-    return tuple(ast.literal_eval(item.strip()) for item in items)
+    return ast.literal_eval(text.replace(";", ","))
 
 
 @ensure_annotations
@@ -1108,3 +1114,46 @@ def show_img_11(img_path):
     img = mpimg.imread(img_path)
     ax.imshow(img)
     ax.axis("off")
+
+
+@ensure_annotations
+def convert_numpy_image_array_to_jpg_files_12(
+    numpy_array: np.ndarray, folder_path: str
+):
+    """Chuyển đổi mảng numpy (trước đó đã từng chuyển ảnh sang) về lại file ảnh và lưu trong 1 thư mục **folder_path**
+
+    Args:
+        numpy_array (np.ndarray): các giá trị từ **0 -> 255**,  shape = (n, height, width, channels), với n là số lượng ảnh
+        folder_path (str): đường dẫn thư mục
+    """
+
+    for idx, image_array in enumerate(numpy_array):
+        image = Image.fromarray(image_array.astype("uint8"))
+
+        image.save(f"{folder_path}/image_{idx}.jpg")
+
+
+@ensure_annotations
+def convert_pdDataframe_to_tfDataset_13(
+    df: pd.DataFrame, target_col: str, batch_size: int
+):
+    """Chuyển pd.Dataframe thành tf.Dataset có chia sẵn các batch, phục vụ cho sử dụng Deep learning đối với dữ liệu đầu vào dạng bảng
+    Args:
+        df (pd.DataFrame): bảng
+        target_col (str): tên cột mục tiêu
+        batch_size (int):
+
+    Returns:
+        dataset:
+    """
+    # Tách các đặc trưng và nhãn mục tiêu
+    features = df.drop(columns=[target_col]).values
+    target = df[target_col].values
+
+    # Tạo tf.data.Dataset từ các đặc trưng và nhãn
+    dataset = tf.data.Dataset.from_tensor_slices((features, target))
+
+    # Phân batch với batch_size=2
+    dataset = dataset.batch(batch_size)
+
+    return dataset
