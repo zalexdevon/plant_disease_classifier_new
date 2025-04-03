@@ -57,7 +57,7 @@ class ManyModelsTypeModelTrainer:
                 # TqdmCallback(verbose=2),
                 ModelCheckpoint(
                     filepath=os.path.join(
-                        self.config.best_models_in_training_dir, i + ".keras"
+                        self.config.best_models_in_training_dir, f"{i}.keras"
                     ),
                     monitor=self.monitor,
                     save_best_only=True,
@@ -144,7 +144,7 @@ class ManyModelsTypeModelTrainer:
         index_scoring = metrics.index(self.scoring)
         for i in range(self.num_models):
             model = load_model(
-                os.path.join(self.config.best_models_in_training_dir, i + ".keras")
+                os.path.join(self.config.best_models_in_training_dir, f"{i}.keras")
             )
             scoring = model.evaluate(self.val_ds, verbose=0)[index_scoring]
             scorings.append(scoring)
@@ -154,7 +154,7 @@ class ManyModelsTypeModelTrainer:
         # Tìm model tốt nhất
         self.best_model = load_model(
             os.path.join(
-                self.config.best_models_in_training_dir, index_best_model + ".keras"
+                self.config.best_models_in_training_dir, f"{index_best_model}.keras"
             )
         )
 
