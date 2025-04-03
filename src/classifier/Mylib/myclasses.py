@@ -518,7 +518,9 @@ class GradCAMForImages:
         )
         heatmap = self.get_heatmap(grads, last_conv_layer_output)
 
-        list_superimposed_img = [self.convert_1image(img) for img in self.images]
+        list_superimposed_img = [
+            self.convert_1image(img, heatmap) for img in self.images
+        ]
 
         return list_superimposed_img
 
