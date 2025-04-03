@@ -649,7 +649,7 @@ class ManyConvNetBlocks_Advanced(layers.Layer):
         return cls(**config)
 
 
-class ManyConvNetBlock(layers.Layer):
+class ManyConvNetBlocks(layers.Layer):
     """Gồm nhiều block **ConvNetBlock**
 
     Attributes:

@@ -53,7 +53,7 @@ from classifier.Mylib.myclasses import (
     PretrainedModel,
     ManyConvNetBlocks_XceptionVersion,
     ManyConvNetBlocks_Advanced,
-    ManyConvNetBlock,
+    ManyConvNetBlocks,
 )
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
