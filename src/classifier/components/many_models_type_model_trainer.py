@@ -95,11 +95,11 @@ class ManyModelsTypeModelTrainer:
     def train_tfDataset(self):
         """Train với kdl = **tf.Dataset**"""
         print(
-            f"========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================"
+            f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
         )
 
         for model, callbacks in zip(self.models, self.list_callbacks):
-            print("====== Tiến hành train 1 model ==========")
+            print("\n====== Tiến hành train 1 model ==========\n")
             self.history = model.fit(
                 self.train_ds,
                 epochs=self.config.epochs,
@@ -108,9 +108,11 @@ class ManyModelsTypeModelTrainer:
                 validation_data=self.val_ds,
                 callbacks=callbacks,
             ).history
-            print("====== Kết thúc train 1 model ==========")
+            print("\n====== Kết thúc train 1 model ==========\n")
 
-        print(f"========KET THUC TRAIN {self.num_models} MODELS !!!!!!================")
+        print(
+            f"\n========KET THUC TRAIN {self.num_models} MODELS !!!!!!================\n"
+        )
 
     def find_scoring_val_scoring_for_best_model(self):
         best_model_train_score = self.results_dict[self.config.scoring]
