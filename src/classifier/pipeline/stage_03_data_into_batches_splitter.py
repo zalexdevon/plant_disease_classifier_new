@@ -20,7 +20,7 @@ class DataIntoBatchesSplitterPipeline:
         try:
             obj.load_data_and_split()
             print(
-                "============Splitting data into batches succesfully ====================="
+                "\n============Splitting data into batches succesfully =====================\n"
             )
         except Exception as e:
             print(f"==========ERROR: =============")

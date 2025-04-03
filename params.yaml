@@ -13,7 +13,7 @@ data_into_batches_splitter:
 
 # MODEL TRAINING
 model_trainer: 
-      is_first_time: t # t or f
+      is_first_time: f # t or f
       model_name: CONVNET_1
       epochs: 50
       callbacks: 
