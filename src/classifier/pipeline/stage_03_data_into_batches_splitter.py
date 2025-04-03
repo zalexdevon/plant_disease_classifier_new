@@ -23,7 +23,7 @@ class DataIntoBatchesSplitterPipeline:
                 "============Splitting data into batches succesfully ====================="
             )
         except Exception as e:
-            print("==========ERROR: =============\n{e}\n")
+            print(f"==========ERROR: =============\n{e}\n")
 
 
 if __name__ == "__main__":
