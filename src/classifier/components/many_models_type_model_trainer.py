@@ -35,20 +35,25 @@ class ManyModelsTypeModelTrainer:
         self.val_ds = tf.data.Dataset.load(self.config.val_ds_path)
         self.monitor = f"val_{self.config.scoring}"
 
-        # Callbacks
-        self.callbacks = [
-            myfuncs.convert_string_to_object_4(callback)
-            for callback in self.config.callbacks
-        ]
-
         # List các model (layers)
         self.list_layers = [
             self.convert_texts_to_layers(layers) for layers in self.config.list_layers
         ]
         self.num_models = len(self.list_layers)
 
+        # Tạo 1 list các optimzer, (mỗi model là 1 optimizer riềng)
+        self.list_optimizer = [
+            myfuncs.convert_string_to_object_4(self.config.optimizer)
+            for _ in range(self.num_models)
+        ]
+
+        # Callbacks
+        self.callbacks = [
+            myfuncs.convert_string_to_object_4(callback)
+            for callback in self.config.callbacks
+        ]
+
         self.class_names = myfuncs.load_python_object(self.config.class_names_path)
-        self.optimizer = myfuncs.convert_string_to_object_4(self.config.optimizer)
 
     def load_callbacks(self):
         self.list_callbacks = []
@@ -72,7 +77,7 @@ class ManyModelsTypeModelTrainer:
 
             self.list_callbacks.append(callbacks)
 
-    def load_1model(self, layers):
+    def load_1model(self, layers, optimizer):
         inputs = layers[0]
         x = inputs
 
@@ -82,7 +87,7 @@ class ManyModelsTypeModelTrainer:
         model = keras.Model(inputs=inputs, outputs=x)
 
         model.compile(
-            optimizer=self.optimizer,
+            optimizer=optimizer,
             loss=self.config.loss,
             metrics=self.config.metrics,
         )
@@ -90,7 +95,10 @@ class ManyModelsTypeModelTrainer:
         return model
 
     def load_model(self):
-        self.models = [self.load_1model(layers) for layers in self.list_layers]
+        self.models = [
+            self.load_1model(layers)
+            for layers, optimizer in zip(self.list_layers, self.list_optimizer)
+        ]
 
     def train_tfDataset(self):
         """Train với kdl = **tf.Dataset**"""
