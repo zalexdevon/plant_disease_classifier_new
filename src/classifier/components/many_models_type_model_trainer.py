@@ -94,12 +94,16 @@ class ManyModelsTypeModelTrainer:
 
     def train_tfDataset(self):
         """Train với kdl = **tf.Dataset**"""
+        tf.config.run_functions_eagerly(True)  # Bật eager execution
+
         print(
             f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
         )
 
-        for model, callbacks in zip(self.models, self.list_callbacks):
-            print("\n====== Tiến hành train 1 model ==========\n")
+        for index, model, callbacks in zip(
+            list(range(self.num_models)), self.models, self.list_callbacks
+        ):
+            print(f"\n====== Tiến hành train model no. {index} ==========\n")
             self.history = model.fit(
                 self.train_ds,
                 epochs=self.config.epochs,
@@ -108,7 +112,7 @@ class ManyModelsTypeModelTrainer:
                 validation_data=self.val_ds,
                 callbacks=callbacks,
             ).history
-            print("\n====== Kết thúc train 1 model ==========\n")
+            print(f"\n====== Kết thúc train model no. {index}==========\n")
 
         print(
             f"\n========KET THUC TRAIN {self.num_models} MODELS !!!!!!================\n"
