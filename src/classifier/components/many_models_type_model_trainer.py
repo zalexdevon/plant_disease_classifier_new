@@ -96,7 +96,7 @@ class ManyModelsTypeModelTrainer:
 
     def load_model(self):
         self.models = [
-            self.load_1model(layers)
+            self.load_1model(layers, optimizer)
             for layers, optimizer in zip(self.list_layers, self.list_optimizer)
         ]
 
