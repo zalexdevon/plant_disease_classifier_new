@@ -274,7 +274,7 @@ class ManyModelsTypeModelTrainer:
     def save_list_monitor_components(self):
         # Tìm scoring cho tập train, val -> để hiện lên biểu đồ
         self.best_model_train_score, self.best_model_val_score = (
-            self.find_scoring_val_scoring_for_best_model(self.results_dict)
+            self.find_scoring_val_scoring_for_best_model()
         )
 
         if self.config.is_first_time == "f":
