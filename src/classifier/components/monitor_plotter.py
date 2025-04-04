@@ -34,6 +34,7 @@ class MonitorPlotter:
             var_name="Category",
             value_name="y",
         )
+        df_long["results"] = results
 
         fig = px.line(
             df_long,
@@ -45,7 +46,8 @@ class MonitorPlotter:
                 "train": "gray",
                 "val": "blue",
             },
-            hovertemplate="%{y}<br><br>" + results,
+            hovertemplate="%{y}<br><br>%{text}",
+            text="results",
         )
 
         for i in range(len(x_values)):

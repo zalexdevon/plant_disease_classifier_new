@@ -40,11 +40,10 @@ class ModelTrainerPipeline:
             model_trainer.save_best_model_results()
             print("\n===== Save best model thành công ====== \n")
             model_trainer.save_list_monitor_components()
-            print("\n===== Save kết quả các lần chạy model thành công ====== \n")
-
             monitor_plotter_config = config.get_monitor_plot_config()
             monitor_plotter = MonitorPlotter(monitor_plotter_config)
             monitor_plotter.plot(model_trainer.list_monitor_components)
+            print("\n===== Save kết quả các lần chạy model thành công ====== \n")
 
             print("================ NO ERORR :)))))))))) ==========================")
 
