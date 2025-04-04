@@ -27,14 +27,20 @@ class MonitorPlotter:
 
         x_values = list(range(1, len(train_scores) + 1))
 
-        df = pd.DataFrame({"x": x_values, "train": train_scores, "val": val_scores})
+        df = pd.DataFrame(
+            {
+                "x": x_values,
+                "train": train_scores,
+                "val": val_scores,
+                "results": results,
+            }
+        )
         df_long = df.melt(
-            id_vars=["x"],
+            id_vars=["x", "results"],
             value_vars=["train", "val"],
             var_name="Category",
             value_name="y",
         )
-        df_long["results"] = results
 
         fig = px.line(
             df_long,

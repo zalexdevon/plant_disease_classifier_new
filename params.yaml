@@ -14,7 +14,7 @@ data_into_batches_splitter:
 # MODEL TRAINING
 model_trainer: 
       is_first_time: f # t or f
-      model_name: CONVNET_12
+      model_name: CONVNET_13
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='accuracy', patience=1, min_delta=1)
