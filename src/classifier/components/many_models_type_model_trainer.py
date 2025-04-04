@@ -154,7 +154,7 @@ class ManyModelsTypeModelTrainer:
     def find_best_model_and_save_model(self):
         scorings = []
         metrics = ["loss"] + self.config.metrics
-        index_scoring = metrics.index(self.scoring)
+        index_scoring = metrics.index(self.config.scoring)
         for i in range(self.num_models):
             model = load_model(
                 os.path.join(self.config.best_models_in_training_dir, f"{i}.keras")
