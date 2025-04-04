@@ -277,7 +277,7 @@ class ManyModelsTypeModelTrainer:
             self.find_scoring_val_scoring_for_best_model()
         )
 
-        if self.config.is_first_time == "f":
+        if os.path.exists(self.config.list_monitor_components_path):
             self.list_monitor_components = myfuncs.load_python_object(
                 self.config.list_monitor_components_path
             )
