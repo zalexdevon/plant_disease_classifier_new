@@ -1650,7 +1650,7 @@ def get_features_target_spliter_for_CV_train_train(train_features, train_target)
 
 
 @ensure_annotations
-def read_yaml(path_to_yaml: str) -> ConfigBox:
+def read_yaml(path_to_yaml: Path) -> ConfigBox:
     """reads yaml file and returns
 
     Args:
@@ -1691,7 +1691,7 @@ def create_directories(path_to_directories: list, verbose=True):
 
 
 @ensure_annotations
-def save_json(path: str, data: dict):
+def save_json(path: Path, data: dict):
     """save json data
 
     Args:
@@ -1706,7 +1706,7 @@ def save_json(path: str, data: dict):
 
 
 @ensure_annotations
-def load_json(path: str) -> ConfigBox:
+def load_json(path: Path) -> ConfigBox:
     """load json files data
 
     Args:
@@ -2034,6 +2034,98 @@ def get_describe_stats_for_numeric_cat_cols(data):
     result = pd.concat([min_of_cols, max_of_cols, median_of_cols], axis=1).T
 
     return result
+
+
+def convert_string_to_object_4(text: str):
+    """Chuyển 1 chuỗi thành 1 đối tượng
+
+    Example:
+        text = "LogisticRegression(C=144, penalty=l1, solver=saga,max_iter=10000,dual=True)"
+
+        -> đối tượng LogisticRegression(C=144, dual=True, max_iter=10000, penalty='l1',solver='saga')
+
+    Args:
+        text (str): _description_
+
+
+    """
+    # Tách tên lớp và tham số
+    class_name, params = text.split("(", 1)
+    params = params[:-1]
+
+    object_class = globals()[class_name]
+
+    if params == "":
+        return object_class()
+
+    # Lấy tham số của đối tượng
+    param_parts = params.split(",")
+    param_parts = [item.strip() for item in param_parts]
+    keys = [item.split("=")[0].strip() for item in param_parts]
+
+    values = [
+        do_ast_literal_eval_advanced_7(item.strip().split("=")[1].strip())
+        for item in param_parts
+    ]
+
+    params = dict(zip(keys, values))
+
+    return object_class(**params)
+
+
+def do_ast_literal_eval_advanced_7(text: str):
+    """Kế thừa hàm ast.literal_eval() nhưng xử lí thêm trường hợp sau
+
+    Tuple, List dạng (1.0 ; 2.0), các phần tử cách nhau bởi dấu ; thay vì dấu ,
+
+    """
+    if ";" not in text:
+        return ast.literal_eval(text)
+
+    return ast.literal_eval(text.replace(";", ","))
+
+
+@ensure_annotations
+def do_list_subtraction_3(a: list, b: list):
+    """Thực hiện trừ a cho b
+
+    ```python
+    a = ['z', 'a', 'b', 'c']
+    b = ['b']
+    c= do_list_subtraction_3(a, b)
+    print(c) -> ['z', 'a', 'c']
+    ```
+
+
+    """
+
+    # Sử dụng Counter để đếm các phần tử trong a và b
+    a_counter = Counter(a)
+    b_counter = Counter(b)
+
+    # Loại bỏ các phần tử trong b từ a
+    result = list((a_counter - b_counter).elements())
+
+    return result
+
+
+def get_different_types_cols_from_df_4(df):
+    cols = pd.Series(df.columns)
+    numeric_cols = cols[cols.str.endswith("num")].tolist()
+    numericCat_cols = cols[cols.str.endswith("numcat")].tolist()
+    binary_cols = cols[cols.str.endswith("bin")].tolist()
+    nominal_cols = cols[cols.str.endswith("nom")].tolist()
+    ordinal_cols = cols[cols.str.endswith("ord")].tolist()
+    cat_cols = binary_cols + nominal_cols + ordinal_cols
+
+    return (
+        numeric_cols,
+        numericCat_cols,
+        cat_cols,
+        binary_cols,
+        nominal_cols,
+        ordinal_cols,
+    )
 
 
 def split_tfdataset_into_tranvaltest_1(
