@@ -72,7 +72,6 @@ class ConfigurationManager:
             model_structure_path=config.model_structure_path,
             list_monitor_components_path=config.list_monitor_components_path,
             # params
-            is_first_time=params.is_first_time,
             model_name=params.model_name,
             epochs=params.epochs,
             callbacks=params.callbacks,

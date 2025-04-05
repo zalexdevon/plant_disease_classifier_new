@@ -40,7 +40,6 @@ class ModelTrainerConfig:
     list_monitor_components_path: str
 
     # params
-    is_first_time: str
     model_name: str
     epochs: int
     callbacks: list

@@ -103,6 +103,7 @@ class ManyModelsTypeModelTrainer:
     def train_tfDataset(self):
         """Train với kdl = **tf.Dataset**"""
         tf.config.run_functions_eagerly(True)  # Bật eager execution
+        tf.data.experimental.enable_debug_mode()  # Bật chế độ eager cho tf.data
 
         print(
             f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
@@ -284,6 +285,11 @@ class ManyModelsTypeModelTrainer:
 
         else:
             self.list_monitor_components = []
+
+        # Thay thế kí tự '\n' trong best_model_results_text thành '<br>'
+        self.best_model_results_text = self.best_model_results_text.replace(
+            "\n", "<br>"
+        )
 
         # Lấy kết quả của model để hiện lên tooltip
         self.list_monitor_components += [
