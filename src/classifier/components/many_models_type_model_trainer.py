@@ -160,8 +160,13 @@ class ManyModelsTypeModelTrainer:
             model = load_model(
                 os.path.join(self.config.best_models_in_training_dir, f"{i}.keras")
             )
-            scoring = model.evaluate(self.val_ds, verbose=0)[index_scoring]
-            scorings.append(scoring)
+            scoring = model.evaluate(self.val_ds, verbose=0)
+
+            # TODO: d
+            print(f"\nDEBUG\n\Scoring: {scoring}\nDEBUG\n")
+            # d
+
+            scorings.append(scoring[index_scoring])
 
         index_best_model = self.find_index_best_model(scorings)
 
