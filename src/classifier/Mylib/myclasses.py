@@ -750,7 +750,16 @@ class CustomisedModelCheckpoint(keras.callbacks.Callback):
     def on_train_end(self, logs=None):
         # Tìm model tốt nhất
         self.per_epoch_scores = np.asarray(self.per_epoch_scores)
-        index_best_model = np.where(self.per_epoch_scores > self.indicator)[0][-1]
+        indexs_good_model = np.where(self.per_epoch_scores > self.indicator)[0]
+
+        index_best_model = None
+        if (
+            len(indexs_good_model) == 0
+        ):  # Nếu ko có model nào đạt chỉ tiêu thì lấy cái tốt nhất
+            index_best_model = np.argmax(self.per_epoch_scores)
+        else:
+            index_best_model = indexs_good_model[-1]
+
         best_model = self.models[index_best_model]
 
         # Lưu model tốt nhất
