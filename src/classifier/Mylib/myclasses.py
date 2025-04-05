@@ -27,6 +27,7 @@ from tensorflow.keras import layers
 from tensorflow import keras
 import keras_cv
 import matplotlib.cm as cm
+from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class ConvNetBlock_XceptionVersion(layers.Layer):
@@ -754,3 +755,31 @@ class CustomisedModelCheckpoint(keras.callbacks.Callback):
 
         # Lưu model tốt nhất
         best_model.save(self.filepath)
+
+
+class ColumnsDeleter(BaseEstimator, TransformerMixin):
+    """Xóa cột
+
+    Attributes:
+        columns: tên các cột cần xóa
+    """
+
+    def __init__(self, columns) -> None:
+        super().__init__()
+        self.columns = columns
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X = X.drop(columns=self.columns)
+
+        self.remaining_cols = X.columns.tolist()
+        return X
+
+    def fit_transform(self, X, y=None):
+        self.fit(X)
+        return self.transform(X)
+
+    def get_feature_names_out(self, input_features=None):
+        return self.remaining_cols
