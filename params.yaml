@@ -28,7 +28,7 @@ model_trainer:
             -
                   - Input(shape=(256; 256; 3))
                   - Flatten()
-                  - Dense(units = 256, activation = 'softmax')
+                  - Dense(units = 16, activation = 'softmax')
                   - Dense(units = 3, activation = 'softmax')
             
       optimizer: RMSprop()
