@@ -52,11 +52,9 @@ class MonitorPlotter:
                 "train": "gray",
                 "val": "blue",
             },
-            # hovertemplate="%{y}<br><br>%{text}",
-            text="results",
         )
 
-        fig.update_traces(hovertemplate="%{y}<br><br>%{text}")
+        fig.update_traces(hovertemplate="%{y}<br><br>%{text}", text=df["results"])
 
         for i in range(len(x_values)):
             text = model_name[i]
