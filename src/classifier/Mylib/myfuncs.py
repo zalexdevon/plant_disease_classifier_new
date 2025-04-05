@@ -1650,7 +1650,7 @@ def get_features_target_spliter_for_CV_train_train(train_features, train_target)
 
 
 @ensure_annotations
-def read_yaml(path_to_yaml: Path) -> ConfigBox:
+def read_yaml(path_to_yaml: str) -> ConfigBox:
     """reads yaml file and returns
 
     Args:
