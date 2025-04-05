@@ -2,9 +2,6 @@ from classifier.config.configuration import ConfigurationManager
 from classifier.components.model_trainer import (
     ModelTrainer,
 )
-from classifier.components.many_models_type_model_trainer import (
-    ManyModelsTypeModelTrainer,
-)
 from classifier import logger
 from classifier.components.monitor_plotter import (
     MonitorPlotter,
