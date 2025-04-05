@@ -18,6 +18,7 @@ from keras.layers import Dense
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 from keras.models import load_model
+from classifier.Mylib.myclasses import CustomisedModelCheckpoint
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
@@ -60,12 +61,12 @@ class ModelTrainer:
         for i in range(self.num_models):
             callbacks = [
                 # TqdmCallback(verbose=2),
-                ModelCheckpoint(
+                CustomisedModelCheckpoint(
                     filepath=os.path.join(
                         self.config.best_models_in_training_dir, f"{i}.keras"
                     ),
                     monitor=self.monitor,
-                    save_best_only=True,
+                    indicator=0.8,
                 ),
                 TensorBoard(
                     log_dir=self.config.root_logs_dir,

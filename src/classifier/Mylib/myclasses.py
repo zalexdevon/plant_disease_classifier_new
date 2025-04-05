@@ -291,7 +291,7 @@ class ImageDataColorAugmentation(layers.Layer):
         contrast_factor=0.2,
         hue_factor=0.2,
         saturation_factor=0.2,
-        **kwargs
+        **kwargs,
     ):
         # super(ImageDataColorAugmentation, self).__init__()
         super().__init__(**kwargs)
@@ -701,3 +701,56 @@ class ManyConvNetBlocks(layers.Layer):
     @classmethod
     def from_config(cls, config):
         return cls(**config)
+
+
+class CustomisedModelCheckpoint(keras.callbacks.Callback):
+    """Callback để lưu model tốt nhất theo từng epoch
+
+    Attributes:
+        filepath (str): đường dẫn đến best model
+        monitor (str): chỉ số đánh giá, *vd:* val_accuracy, val_loss, accuracy, loss
+        indicator (str): chỉ tiêu
+
+    Examples:
+        Với **monitor = val_accuracy và indicator = 0.99**
+
+        Tìm model thỏa val_accuracy > 0.99 và số epoch lớn nhất
+
+        Lí do lấy số epoch lớn nhất:
+        - Nếu lấy nhỏ nhất -> model mặc dù cho val_accuracy đạt chỉ tiêu nhưng train_accuracy vẫn còn thấp
+        - Nếu lấy lớn nhất -> khi đó model có val_accuracy đạt chỉ tiêu và train_accuracy cũng cao
+    """
+
+    def __init__(self, filepath: str, monitor: str, indicator: float):
+        super().__init__()
+        self.filepath = filepath
+        self.monitor = monitor
+        self.indicator = indicator
+
+    def on_train_begin(self, logs=None):
+        self.sign_for_score = (
+            1  # Nếu scoring là loss thì lấy âm -> quy về tìm lớn nhất thôi
+        )
+        if (
+            self.monitor.endswith("loss")
+            or self.monitor.endswith("mse")
+            or self.monitor.endswith("mae")
+        ):
+            self.indicator = -self.indicator
+            self.sign_for_score = -1
+
+        self.per_epoch_scores = []
+        self.models = []
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.models.append(self.model)
+        self.per_epoch_scores.append(logs.get(self.monitor) * self.sign_for_score)
+
+    def on_train_end(self, logs=None):
+        # Tìm model tốt nhất
+        self.per_epoch_scores = np.asarray(self.per_epoch_scores)
+        index_best_model = np.where(self.per_epoch_scores > self.indicator)[0][-1]
+        best_model = self.models[index_best_model]
+
+        # Lưu model tốt nhất
+        best_model.save(self.filepath)
