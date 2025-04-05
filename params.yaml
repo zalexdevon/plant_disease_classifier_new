@@ -13,13 +13,14 @@ data_into_batches_splitter:
 
 # MODEL TRAINING
 model_trainer: 
-      model_name: CONVNET_27
+      model_name: CONVNET_28
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=5, min_delta=0.01)
       list_layers: 
             -
                   - Input(shape=(256; 256; 3))
+                  - ConvNetBlock_Advanced(filters = 32)
                   - Flatten()
                   - Dense(units = 16, activation = 'relu')
                   - Dense(units = 32, activation = 'relu')
