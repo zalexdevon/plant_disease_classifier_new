@@ -43,7 +43,6 @@ class ModelTrainerConfig:
     model_name: str
     epochs: int
     callbacks: list
-    model_training_type: str
     list_layers: list
     optimizer: str
     loss: str

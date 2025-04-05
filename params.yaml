@@ -17,7 +17,6 @@ model_trainer:
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='accuracy', patience=1, min_delta=1)
-      model_training_type: m # o: one model, m: many models
       list_layers: 
             -
                   - Input(shape=(256; 256; 3))

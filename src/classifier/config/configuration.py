@@ -75,7 +75,6 @@ class ConfigurationManager:
             model_name=params.model_name,
             epochs=params.epochs,
             callbacks=params.callbacks,
-            model_training_type=params.model_training_type,
             list_layers=params.list_layers,
             optimizer=params.optimizer,
             loss=params.loss,

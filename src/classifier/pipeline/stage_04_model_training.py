@@ -23,10 +23,7 @@ class ModelTrainerPipeline:
         model_trainer_config = config.get_model_trainer_config()
 
         model_trainer = None
-        if model_trainer_config.model_training_type == "o":
-            model_trainer = ModelTrainer(config=model_trainer_config)
-        else:
-            model_trainer = ManyModelsTypeModelTrainer(config=model_trainer_config)
+        model_trainer = ModelTrainer(config=model_trainer_config)
 
         try:
             model_trainer.load_data_to_train()
