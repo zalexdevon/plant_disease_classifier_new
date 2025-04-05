@@ -46,11 +46,14 @@ class ModelTrainerPipeline:
             monitor_plotter.plot(model_trainer.list_monitor_components)
             print("\n===== Save kết quả các lần chạy model thành công ====== \n")
 
-            print("================ NO ERORR :)))))))))) ==========================")
+            print(
+                "\n\n================ NO ERORR :)))))))))) ==========================\n\n"
+            )
 
         except Exception as e:
-            print(f"==========ERROR: =============")
+            print(f"\n\n==========ERROR: =============")
             traceback.print_exc()
+            print("\n\n")
 
 
 if __name__ == "__main__":
