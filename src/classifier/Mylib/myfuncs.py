@@ -1650,7 +1650,7 @@ def get_features_target_spliter_for_CV_train_train(train_features, train_target)
 
 
 @ensure_annotations
-def read_yaml(path_to_yaml: Path) -> ConfigBox:
+def read_yaml(path_to_yaml: str) -> ConfigBox:
     """reads yaml file and returns
 
     Args:
@@ -1691,7 +1691,7 @@ def create_directories(path_to_directories: list, verbose=True):
 
 
 @ensure_annotations
-def save_json(path: Path, data: dict):
+def save_json(path: str, data: dict):
     """save json data
 
     Args:
@@ -1706,7 +1706,7 @@ def save_json(path: Path, data: dict):
 
 
 @ensure_annotations
-def load_json(path: Path) -> ConfigBox:
+def load_json(path: str) -> ConfigBox:
     """load json files data
 
     Args:
