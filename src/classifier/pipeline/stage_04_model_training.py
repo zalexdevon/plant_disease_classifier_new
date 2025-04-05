@@ -38,8 +38,9 @@ class ModelTrainerPipeline:
             model_trainer.train_tfDataset()
             print("\n===== Train thành công ====== \n")
             model_trainer.save_best_model_results()
-            print("\n===== Save best model thành công ====== \n")
+            print("\n===== Save kết quả đánh giá best model thành công ====== \n")
             model_trainer.save_list_monitor_components()
+
             monitor_plotter_config = config.get_monitor_plot_config()
             monitor_plotter = MonitorPlotter(monitor_plotter_config)
             monitor_plotter.plot(model_trainer.list_monitor_components)
