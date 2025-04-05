@@ -13,7 +13,7 @@ data_into_batches_splitter:
 
 # MODEL TRAINING
 model_trainer: 
-      model_name: CONVNET_21
+      model_name: CONVNET_22
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='accuracy', patience=1, min_delta=1)
@@ -24,12 +24,6 @@ model_trainer:
                   - Flatten()
                   - Dense(units = 16, activation = 'relu')
                   - Dense(units = 32, activation = 'relu')
-                  - Dense(units = 3, activation = 'softmax')
-            -
-                  - Input(shape=(256; 256; 3))
-                  - Flatten()
-                  - Dense(units = 32, activation = 'relu')
-                  - Dense(units = 16, activation = 'relu')
                   - Dense(units = 3, activation = 'softmax')
             
       optimizer: RMSprop()
