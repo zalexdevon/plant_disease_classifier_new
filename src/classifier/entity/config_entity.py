@@ -41,6 +41,7 @@ class ModelTrainerConfig:
 
     # params
     model_name: str
+    target_score: float
     epochs: int
     callbacks: list
     list_layers: list

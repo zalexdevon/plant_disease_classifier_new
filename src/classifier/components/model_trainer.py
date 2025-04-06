@@ -66,7 +66,7 @@ class ModelTrainer:
                         self.config.best_models_in_training_dir, f"{i}.keras"
                     ),
                     monitor=self.monitor,
-                    indicator=0.8,
+                    indicator=self.config.target_score,
                 ),
                 TensorBoard(
                     log_dir=self.config.root_logs_dir,

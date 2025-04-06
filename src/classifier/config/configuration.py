@@ -73,6 +73,7 @@ class ConfigurationManager:
             list_monitor_components_path=config.list_monitor_components_path,
             # params
             model_name=params.model_name,
+            target_score=params.target_score,
             epochs=params.epochs,
             callbacks=params.callbacks,
             list_layers=params.list_layers,
