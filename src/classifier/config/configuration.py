@@ -73,7 +73,6 @@ class ConfigurationManager:
             list_monitor_components_path=config.list_monitor_components_path,
             # params
             model_name=params.model_name,
-            target_score=params.target_score,
             epochs=params.epochs,
             callbacks=params.callbacks,
             list_layers=params.list_layers,
@@ -81,6 +80,7 @@ class ConfigurationManager:
             loss=params.loss,
             # common params
             scoring=self.params.scoring,
+            target_score=self.params.target_score,
             image_size=self.params.image_size,
             batch_size=self.params.batch_size,
             metrics=self.params.metrics,

@@ -1,5 +1,6 @@
 # COMMON
 scoring: accuracy
+target_score: 0.8
 image_size: 256
 batch_size: 16
 metrics: 
@@ -14,7 +15,6 @@ data_into_batches_splitter:
 # MODEL TRAINING
 model_trainer: 
       model_name: CONVNET_29
-      target_score: 0.8
       epochs: 50
       callbacks: 
             - EarlyStopping(monitor='val_accuracy', patience=1, min_delta=1)

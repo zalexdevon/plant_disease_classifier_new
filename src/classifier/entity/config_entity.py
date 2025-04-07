@@ -41,7 +41,6 @@ class ModelTrainerConfig:
 
     # params
     model_name: str
-    target_score: float
     epochs: int
     callbacks: list
     list_layers: list
@@ -50,6 +49,7 @@ class ModelTrainerConfig:
 
     # common params
     scoring: str
+    target_score: float
     image_size: int
     batch_size: int
     metrics: list
