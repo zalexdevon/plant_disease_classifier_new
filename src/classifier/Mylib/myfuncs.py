@@ -72,6 +72,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
 from typing import Union
+from sklearn import metrics
 
 
 def get_sum(a, b):
@@ -992,7 +993,16 @@ def do_list_subtraction_3(a: list, b: list):
     return result
 
 
-def get_different_types_cols_from_df_4(df):
+@ensure_annotations
+def get_different_types_cols_from_df_4(df: pd.DataFrame):
+    """Tìm các cột kiểu numeric, numericCat, cat, binary, nominal, ordinal  target từ df
+
+    Lưu ý: có tìm luôn cột **target**
+
+    Returns:
+        (numeric_cols, numericCat_cols, cat_cols, binary_cols, nominal_cols, ordinal_cols):
+    """
+
     cols = pd.Series(df.columns)
     numeric_cols = cols[cols.str.endswith("num")].tolist()
     numericCat_cols = cols[cols.str.endswith("numcat")].tolist()
@@ -1000,6 +1010,7 @@ def get_different_types_cols_from_df_4(df):
     nominal_cols = cols[cols.str.endswith("nom")].tolist()
     ordinal_cols = cols[cols.str.endswith("ord")].tolist()
     cat_cols = binary_cols + nominal_cols + ordinal_cols
+    target_col = cols[cols.str.endswith("target")].tolist()[0]
 
     return (
         numeric_cols,
@@ -1008,6 +1019,7 @@ def get_different_types_cols_from_df_4(df):
         binary_cols,
         nominal_cols,
         ordinal_cols,
+        target_col,
     )
 
 
@@ -1358,3 +1370,192 @@ def convert_pdDataframe_to_tfDataset_13(
     dataset = dataset.batch(batch_size)
 
     return dataset
+
+
+@ensure_annotations
+def get_different_types_cols_from_df_14(df: pd.DataFrame):
+    """Tìm các cột kiểu numeric, numericCat, cat, binary, nominal, ordinal từ df
+    Returns:
+        (numeric_cols, numericCat_cols, cat_cols, binary_cols, nominal_cols, ordinal_cols):
+    """
+    cols = pd.Series(df.columns)
+    numeric_cols = cols[cols.str.endswith("num")].tolist()
+    numericCat_cols = cols[cols.str.endswith("numcat")].tolist()
+    binary_cols = cols[cols.str.endswith("bin")].tolist()
+    nominal_cols = cols[cols.str.endswith("nom")].tolist()
+    ordinal_cols = cols[cols.str.endswith("ord")].tolist()
+    cat_cols = binary_cols + nominal_cols + ordinal_cols
+
+    return (
+        numeric_cols,
+        numericCat_cols,
+        cat_cols,
+        binary_cols,
+        nominal_cols,
+        ordinal_cols,
+    )
+
+
+def evaluate_classifier_15(
+    model,
+    train_feature_data,
+    train_target_data,
+    val_feature_data,
+    val_target_data,
+    class_names,
+):
+    """Đánh giá chung cho 1 classifier
+
+    Định dạng của kết quả:
+
+        Train accuracy:
+
+        Val accuracy:
+
+        Train classification_report:
+
+        Val classification_report:
+
+    """
+    train_accuracy = evaluate_model_on_one_scoring_17(
+        model, train_feature_data, train_target_data, "accuracy"
+    )
+    val_accuracy = evaluate_model_on_one_scoring_17(
+        model, val_feature_data, val_target_data, "accuracy"
+    )
+
+    train_classification_report = get_classification_report_18(
+        model, train_feature_data, train_target_data, class_names
+    )
+    val_classification_report = get_classification_report_18(
+        model, val_feature_data, val_target_data, class_names
+    )
+
+    model_results_text = f"Train accuracy: {train_accuracy}\n"
+    model_results_text += f"Val accuracy: {val_accuracy}\n"
+    model_results_text += (
+        f"Train classification_report: \n{train_classification_report}\n"
+    )
+    model_results_text += f"Val classification_report: \n{val_classification_report}"
+
+    return model_results_text
+
+
+def evaluate_regressor_16(
+    model,
+    train_feature_data,
+    train_target_data,
+    val_feature_data,
+    val_target_data,
+    class_names=None,
+):
+    """Đánh giá chung cho 1 regressor
+
+    Định dạng của kết quả:
+
+        Train RMSE:
+
+        Val RMSE:
+
+        Train MAE:
+
+        Val MAE:
+
+    """
+    train_prediction = model.predict(train_feature_data)
+    val_prediction = model.predict(val_feature_data)
+    train_rmse = np.sqrt(
+        metrics.mean_squared_error(train_target_data, train_prediction)
+    )
+    val_rmse = np.sqrt(metrics.mean_squared_error(val_target_data, val_prediction))
+    train_mae = np.sqrt(
+        metrics.mean_absolute_error(train_target_data, train_prediction)
+    )
+    val_mae = np.sqrt(metrics.mean_absolute_error(val_target_data, val_prediction))
+
+    model_results_text = f"Train RMSE: {train_rmse}\n"
+    model_results_text += f"Val RMSE: {val_rmse}\n"
+    model_results_text = f"Train MAE: {train_mae}\n"
+    model_results_text += f"Val MAE: {val_mae}\n"
+
+    return model_results_text
+
+
+def evaluate_model_on_one_scoring_17(model, feature, target, scoring):
+    if scoring == "accuracy":
+        prediction = model.predict(feature)
+        return metrics.accuracy_score(target, prediction)
+    elif scoring == "log_loss":
+        prediction = model.predict_proba(feature)
+        return metrics.log_loss(target, prediction)
+    elif scoring == "mse":
+        prediction = model.predict(feature)
+        return np.sqrt(metrics.mean_squared_error(target, prediction))
+    elif scoring == "mae":
+        prediction = model.predict(feature)
+        return metrics.mean_absolute_error(target, prediction)
+    else:
+        raise ValueError(
+            "===== Chỉ mới định nghĩa cho accuracy, log_loss, mse, mae =============="
+        )
+
+
+def get_classification_report_18(model, feature, target, class_names):
+    """Tạo classfication report cho classifier"""
+    class_names = np.asarray(class_names)
+
+    target = [int(item) for item in target]
+    target = class_names[target]
+
+    prediction = model.predict(feature)
+    prediction = [int(item) for item in prediction]
+    prediction = class_names[prediction]
+    return metrics.classification_report(target, prediction)
+
+
+def evaluate_classifier_on_test_data_18(model, feature_data, target_data, class_names):
+    """Đánh giá chung cho 1 classifier
+
+    Định dạng của kết quả:
+
+        Accuracy:
+
+        Classification_report:
+
+    """
+    train_accuracy = evaluate_model_on_one_scoring_17(
+        model, feature_data, target_data, "accuracy"
+    )
+
+    train_classification_report = get_classification_report_18(
+        model, feature_data, target_data, class_names
+    )
+
+    model_results_text = f"Accuracy: {train_accuracy}"
+    model_results_text += f"Classification_report: \n{train_classification_report}\n"
+
+    return model_results_text
+
+
+def evaluate_regressor_on_test_data_18(
+    model, feature_data, target_data, class_names=None
+):
+    """Đánh giá chung cho 1 regressor
+
+    Định dạng của kết quả:
+        RMSE:
+
+        MAE:
+
+    """
+    train_rmse = evaluate_model_on_one_scoring_17(
+        model, feature_data, target_data, "mse"
+    )
+    train_mae = evaluate_model_on_one_scoring_17(
+        model, feature_data, target_data, "mae"
+    )
+
+    model_results_text = f"RMSE: {train_rmse}"
+    model_results_text = f"MAE: {train_mae}"
+
+    return model_results_text
