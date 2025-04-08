@@ -28,6 +28,7 @@ from tensorflow import keras
 import keras_cv
 import matplotlib.cm as cm
 from sklearn.base import BaseEstimator, TransformerMixin
+from classifier.Mylib import myfuncs
 
 
 class ConvNetBlock_XceptionVersion(layers.Layer):
@@ -792,9 +793,10 @@ class ColumnsDeleter(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
+
         X = X.drop(columns=self.columns)
 
-        self.remaining_cols = X.columns.tolist()
+        self.cols = X.columns.tolist()
         return X
 
     def fit_transform(self, X, y=None):
@@ -802,4 +804,212 @@ class ColumnsDeleter(BaseEstimator, TransformerMixin):
         return self.transform(X)
 
     def get_feature_names_out(self, input_features=None):
-        return self.remaining_cols
+        return self.cols
+
+
+class ModelEvaluator:
+    """Đánh giá model cho tập train-val hoặc tập test, tích hợp cả classifier và regressor
+
+    Hàm chính:
+    - evaluate():
+
+    Lưu ý:
+    - Khi đánh giá regressor thì truyền class_names = None
+    - KHi đánh giá 1 tập (vd: đánh giá tập test) thì truyền cho train_feature_data, train_target_data, còn val_feature_data và val_target_data **bỏ trống**
+
+    Attributes:
+        model (_type_):
+        train_feature_data (_type_):
+        train_target_data (_type_):
+        val_feature_data (_type_, optional): Defaults to None.
+        val_target_data (_type_, optional):  Defaults to None.
+        class_names (_type_, optional):  Defaults to None.
+    """
+
+    def __init__(
+        self,
+        model,
+        train_feature_data,
+        train_target_data,
+        val_feature_data=None,
+        val_target_data=None,
+        class_names=None,
+    ):
+        self.model = model
+        self.train_feature_data = train_feature_data
+        self.train_target_data = train_target_data
+        self.val_feature_data = val_feature_data
+        self.val_target_data = val_target_data
+        self.class_names = class_names
+
+    def evaluate_train_classifier(self):
+        train_accuracy = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.train_feature_data, self.train_target_data, "accuracy"
+        )
+        val_accuracy = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.val_feature_data, self.val_target_data, "accuracy"
+        )
+
+        train_classification_report = myfuncs.get_classification_report_18(
+            self.model,
+            self.train_feature_data,
+            self.train_target_data,
+            self.class_names,
+        )
+        val_classification_report = myfuncs.get_classification_report_18(
+            self.model, self.val_feature_data, self.val_target_data, self.class_names
+        )
+
+        model_results_text = f"Train accuracy: {train_accuracy}\n"
+        model_results_text += f"Val accuracy: {val_accuracy}\n"
+        model_results_text += (
+            f"Train classification_report: \n{train_classification_report}\n"
+        )
+        model_results_text += (
+            f"Val classification_report: \n{val_classification_report}"
+        )
+
+        return model_results_text
+
+    def evaluate_train_regressor(self):
+        train_rmse = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.train_feature_data, self.train_target_data, "mse"
+        )
+        val_rmse = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.val_feature_data, self.val_target_data, "mse"
+        )
+        train_mae = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.train_feature_data, self.train_target_data, "mae"
+        )
+        val_mae = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.val_feature_data, self.val_target_data, "mae"
+        )
+
+        model_results_text = f"Train RMSE: {train_rmse}\n"
+        model_results_text += f"Val RMSE: {val_rmse}\n"
+        model_results_text = f"Train MAE: {train_mae}\n"
+        model_results_text += f"Val MAE: {val_mae}\n"
+
+        return model_results_text
+
+    def evaluate_train(self):
+        return (
+            self.evaluate_train_regressor()
+            if self.class_names is None
+            else self.evaluate_train_classifier()
+        )
+
+    def evaluate_test_classifier(self):
+        test_accuracy = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.train_feature_data, self.train_target_data, "accuracy"
+        )
+
+        test_classification_report = myfuncs.get_classification_report_18(
+            self.model,
+            self.train_feature_data,
+            self.train_target_data,
+            self.class_names,
+        )
+
+        model_results_text = f"Test Accuracy: {test_accuracy}\n"
+        model_results_text += (
+            f"Test Classification_report: \n{test_classification_report}\n"
+        )
+
+        return model_results_text
+
+    def evaluate_test_regressor(self):
+        train_rmse = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.train_feature_data, self.train_target_data, "mse"
+        )
+        train_mae = myfuncs.evaluate_model_on_one_scoring_17(
+            self.model, self.train_feature_data, self.train_target_data, "mae"
+        )
+
+        model_results_text = f"Test RMSE: {train_rmse}\n"
+        model_results_text = f"Test MAE: {train_mae}\n"
+
+        return model_results_text
+
+    def evaluate_test(self):
+        return (
+            self.evaluate_test_regressor()
+            if self.class_names is None
+            else self.evaluate_test_classifier()
+        )
+
+    def evaluate(self):
+        return (
+            self.evaluate_test()
+            if self.val_feature_data is None
+            else self.evaluate_train()
+        )
+
+
+class BestModelSearcher:
+    """Searcher đi tìm model tốt nhất và train, val scoring tương ứng
+
+    Hàm chính:
+        - next()
+
+    Examples:
+        Với **scoring = accuracy và target_score = 0.99**
+
+        Tìm model thỏa val_accuracy > 0.99 và train_accuracy > 0.99 (1) và val_accuracy là lớn nhất trong số đó
+
+        Nếu không thỏa (1) thì lấy theo val_accuracy lớn nhất
+
+    Attributes:
+        models (_type_): Model tốt nhất đang ở trong này
+        train_scorings (_type_):
+        val_scorings (_type_):
+        target_score (_type_): Chỉ tiêu đề ra
+        scoring (_type_): Chỉ số đánh giá
+
+
+    """
+
+    def __init__(self, models, train_scorings, val_scorings, target_score, scoring):
+        self.models = models
+        self.train_scorings = train_scorings
+        self.val_scorings = val_scorings
+        self.target_score = target_score
+        self.scoring = scoring
+
+    def find_train_val_scorings_to_find_the_best(self):
+        sign_for_score = 1  # Nếu scoring cần min thì lấy âm -> quy về tìm lớn nhất thôi
+        if self.scoring in myfuncs.SCORINGS_PREFER_MININUM:
+            self.target_score = -self.target_score
+            sign_for_score = -1
+
+        self.train_scorings_to_find_the_best = np.asarray(
+            [item * sign_for_score for item in self.train_scorings]
+        )
+        self.val_scorings_to_find_the_best = np.asarray(
+            [item * sign_for_score for item in self.val_scorings]
+        )
+
+    def next(self):
+
+        indexs_good_model = np.where(
+            (self.val_scorings_to_find_the_best > self.target_score)
+            & (self.train_scorings_to_find_the_best > self.target_score)
+        )[0]
+
+        index_best_model = None
+        if (
+            len(indexs_good_model) == 0
+        ):  # Nếu ko có model nào đạt chỉ tiêu thì lấy cái tốt nhất
+            index_best_model = np.argmax(self.val_scorings_to_find_the_best)
+        else:
+            val_series = pd.Series(
+                self.val_scorings_to_find_the_best[indexs_good_model],
+                index=indexs_good_model,
+            )
+            index_best_model = val_series.idxmax()
+
+        best_model = self.models[index_best_model]
+        train_scoring = self.train_scorings[index_best_model]
+        val_scoring = self.val_scorings[index_best_model]
+
+        return best_model, train_scoring, val_scoring

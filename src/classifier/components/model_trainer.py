@@ -28,17 +28,18 @@ class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
         self.config = config
 
-    def convert_texts_to_layers(self, texts):
-        return [myfuncs.convert_string_to_object_4(text) for text in texts]
-
     def load_data_to_train(self):
         self.train_ds = tf.data.Dataset.load(self.config.train_ds_path)
         self.val_ds = tf.data.Dataset.load(self.config.val_ds_path)
         self.monitor = f"val_{self.config.scoring}"
 
+        # Toàn bộ chỉ số đánh giá
+        self.all_metrics = ["loss"] + self.config.metrics
+
         # List các model (layers)
         self.list_layers = [
-            self.convert_texts_to_layers(layers) for layers in self.config.list_layers
+            myfuncs.convert_list_string_to_list_object_20(layers)
+            for layers in self.config.list_layers
         ]
         self.num_models = len(self.list_layers)
 
@@ -49,7 +50,7 @@ class ModelTrainer:
         ]
 
         # Callbacks
-        self.callbacks = [
+        self.added_callbacks = [
             myfuncs.convert_string_to_object_4(callback)
             for callback in self.config.callbacks
         ]
@@ -74,7 +75,7 @@ class ModelTrainer:
                     write_graph=True,  # Đảm bảo ghi đồ thị
                     write_images=True,
                 ),
-            ] + self.callbacks
+            ] + self.added_callbacks
 
             self.list_callbacks.append(callbacks)
 
@@ -105,6 +106,7 @@ class ModelTrainer:
         """Train với kdl = **tf.Dataset**"""
         tf.config.run_functions_eagerly(True)  # Bật eager execution
         tf.data.experimental.enable_debug_mode()  # Bật chế độ eager cho tf.data
+        self.list_num_epochs = []
 
         print(
             f"\n========TIEN HANH TRAIN {self.num_models} MODELS !!!!!!================\n"
@@ -114,107 +116,86 @@ class ModelTrainer:
             list(range(self.num_models)), self.models, self.list_callbacks
         ):
             print(f"\n====== Tiến hành train model no. {index} ==========\n")
-            self.history = model.fit(
+            history = model.fit(
                 self.train_ds,
                 epochs=self.config.epochs,
                 batch_size=self.config.batch_size,
                 verbose=1,
                 validation_data=self.val_ds,
                 callbacks=callbacks,
-            ).history
+            )
+
+            # Lưu lại số epoch đã chạy
+            self.list_num_epochs.append(len(history.history["loss"]))
             print(f"\n====== Kết thúc train model no. {index}==========\n")
 
         print(
             f"\n========KET THUC TRAIN {self.num_models} MODELS !!!!!!================\n"
         )
 
-    def find_scoring_val_scoring_for_best_model(self):
-        best_model_train_score = self.results_dict[self.config.scoring]
-        best_model_val_score = self.results_dict["val_" + self.config.scoring]
-
-        while True:
-            if self.config.scoring == "accuracy":
-                best_model_train_score = best_model_train_score * 100
-                best_model_val_score = best_model_val_score * 100
-
-                break
-
-            break
-
-        return best_model_train_score, best_model_val_score
-
-    def find_index_best_model(self, scorings):
-        if self.config.scoring == "accuracy":
-            return np.argmax(scorings)
-        elif self.config.scoring == "loss":
-            return np.argmin(scorings)
-        else:
-            raise ValueError(
-                "==== Chỉ mới định nghĩa scoring = accuracy, loss thôi =========="
-            )
-
-    def find_best_model_and_save_model(self):
-        scorings = []
-        metrics = ["loss"] + self.config.metrics
-        index_scoring = metrics.index(self.config.scoring)
+    def load_trained_models_and_val_scorings(self):
+        self.val_scorings = []
+        self.trained_models = []
+        index_scoring = self.all_metrics.index(self.config.scoring)
         for i in range(self.num_models):
             model = load_model(
                 os.path.join(self.config.best_models_in_training_dir, f"{i}.keras")
             )
-            scoring = model.evaluate(self.val_ds, verbose=0)
+            scoring = model.evaluate(self.val_ds, verbose=0)[index_scoring]
 
-            # TODO: d
-            print(f"\nDEBUG\n\Scoring: {scoring}\nDEBUG\n")
-            # d
-
-            scorings.append(scoring[index_scoring])
-
-        index_best_model = self.find_index_best_model(scorings)
-
-        # Tìm model tốt nhất
-        self.best_model = load_model(
-            os.path.join(
-                self.config.best_models_in_training_dir, f"{index_best_model}.keras"
-            )
-        )
-
-        # Lưu lại model tốt nhất
-        self.best_model.save(self.config.best_model_path)
+            self.trained_models.append(model)
+            self.val_scorings.append(scoring)
 
     def save_best_model_results(self):
-        """Lưu các kết quả của model **tốt nhất** (đã được lưu trước đó bởi callback **ModelCheckpoint**)"""
-        # Lấy model tốt nhất
-        print("\n===== Tìm mô hình tốt nhất ===========\n")
-        self.find_best_model_and_save_model()
-        print("\n===== Đã tìm xong mô hình tốt nhất + lưu lại model ===========\n")
+        # Lấy model tốt nhất và số epoch tương ứng
+        self.load_trained_models_and_val_scorings()
+        index_best_model = (
+            np.argmin(self.val_scorings)
+            if self.config.scoring in myfuncs.SCORINGS_PREFER_MININUM
+            else np.argmax(self.val_scorings)
+        )
+        self.best_model = self.trained_models[index_best_model]
+        num_epochs = self.list_num_epochs[index_best_model]
 
-        # Tìm các chỉ số loss, metrics
-        evaluation_metrics = ["loss"] + self.config.metrics
+        # Tìm các chỉ số đánh giá
         result = list(self.best_model.evaluate(self.train_ds, verbose=0))
-        val_evaluation_metrics = ["val_" + item for item in evaluation_metrics]
+        val_evaluation_metrics = ["val_" + item for item in self.all_metrics]
         val_result = list(self.best_model.evaluate(self.val_ds, verbose=0))
         self.results_dict = dict(
-            zip(evaluation_metrics + val_evaluation_metrics, result + val_result)
+            zip(self.all_metrics + val_evaluation_metrics, result + val_result)
         )
+
+        self.train_scoring = self.results_dict.pop(self.config.scoring)
+        self.val_scoring = self.results_dict.pop("val_" + self.config.scoring)
 
         # Tìm classfication report
-        train_classification_report = self.get_classification_report_for_best_model(
-            self.train_ds
+        train_classification_report = myfuncs.get_classification_report_for_DLmodel_21(
+            model=self.best_model,
+            ds=self.train_ds,
+            class_names=self.class_names,
+            batch_size=self.config.batch_size,
         )
 
-        val_classification_report = self.get_classification_report_for_best_model(
-            self.val_ds
+        val_classification_report = myfuncs.get_classification_report_for_DLmodel_21(
+            model=self.best_model,
+            ds=self.val_ds,
+            class_names=self.class_names,
+            batch_size=self.config.batch_size,
         )
-
-        # Tìm số vòng lặp đã chạy trước khi dừng
-        num_epochs = len(self.history["loss"])
 
         # In ra các kết quả đánh giá
         self.best_model_results_text = (
-            "========KET QUA CUA MO HINH TOT NHAT================\n"
+            "========KẾT QUẢ MÔ HÌNH TỐT NHẤT================\n"
         )
-        self.best_model_results_text += "CAC CHI SO DANH GIA:\n"
+        self.best_model_results_text += "Chỉ số scoring\n"
+        self.best_model_results_text += (
+            f"Train {self.config.scoring}: {self.train_scoring}\n"
+        )
+        self.best_model_results_text += (
+            f"Val {self.config.scoring}: {self.val_scoring}\n"
+        )
 
+        self.best_model_results_text += "\nCác chỉ số khác\n"
         for key, value in self.results_dict.items():
             self.best_model_results_text += f"- {key}: {value}\n"
 
@@ -222,12 +203,10 @@ class ModelTrainer:
             f"\nNUM_RUNNING_EPOCHS: {num_epochs} / {self.config.epochs}\n\n"
         )
 
-        self.best_model_results_text += "\nCLASSIFICATION REPORT\n"
-
-        self.best_model_results_text += "Train: \n"
-        self.best_model_results_text += train_classification_report + "\n\n"
-        self.best_model_results_text += "Val: \n"
-        self.best_model_results_text += val_classification_report + "\n\n"
+        self.best_model_results_text += "Train classfication report: \n"
+        self.best_model_results_text += f"{train_classification_report}\n\n"
+        self.best_model_results_text += "Val classfication report: \n"
+        self.best_model_results_text += f"{val_classification_report}\n\n"
 
         print(self.best_model_results_text)
 
@@ -235,75 +214,32 @@ class ModelTrainer:
         with open(self.config.results_path, mode="w") as file:
             file.write(self.best_model_results_text)
 
-        # Lưu các biểu đồ per epoch cho từng chỉ số (mỗi epoch là 1 model riêng)
-        epochs = range(1, num_epochs + 1)
-        epochs = [str(i) for i in epochs]
-
-        metrics_and_loss = self.config.metrics + ["loss"]
-
-        for item in metrics_and_loss:
-            plt.plot(epochs, self.history[item], color="gray")
-            plt.plot(epochs, self.history["val_" + item], color="blue")
-            plt.ylim(bottom=0)
-            plt.savefig(
-                os.path.join(self.config.root_dir, item + "_per_epoch.png"),
-                dpi=None,
-                bbox_inches="tight",
-                format=None,
-            )
-            plt.clf()
-
         # Lưu cấu trúc của model
         keras.utils.plot_model(
             self.best_model, self.config.model_structure_path, show_shapes=True
         )
 
-    def get_classification_report_for_best_model(self, ds):
-        y_true = []
-        y_pred = []
-
-        class_names = np.asarray(self.class_names)
-
-        # Lặp qua các batch trong train_ds
-        for images, labels in ds:
-            # Dự đoán bằng mô hình
-            predictions = self.best_model.predict(
-                images, batch_size=self.config.batch_size, verbose=0
-            )
-
-            y_pred_batch = class_names[np.argmax(predictions, axis=-1)].tolist()
-            y_true_batch = class_names[np.asarray(labels)].tolist()
-            y_true += y_true_batch
-            y_pred += y_pred_batch
-
-        return classification_report(y_true, y_pred)
-
     def save_list_monitor_components(self):
-        # Tìm scoring cho tập train, val -> để hiện lên biểu đồ
-        self.best_model_train_score, self.best_model_val_score = (
-            self.find_scoring_val_scoring_for_best_model()
-        )
+        if self.config.scoring == "accuracy":
+            self.train_scoring, self.val_scoring = (
+                self.train_scoring * 100,
+                self.val_scoring * 100,
+            )
 
         if os.path.exists(self.config.list_monitor_components_path):
             self.list_monitor_components = myfuncs.load_python_object(
                 self.config.list_monitor_components_path
             )
 
-        else:
+        else:  # Này là lần đầu training rồi !!!
             self.list_monitor_components = []
-
-        # Thay thế kí tự '\n' trong best_model_results_text thành '<br>'
-        self.best_model_results_text = self.best_model_results_text.replace(
-            "\n", "<br>"
-        )
 
         # Lấy kết quả của model để hiện lên tooltip
         self.list_monitor_components += [
             (
                 self.config.model_name,
-                self.best_model_train_score,
-                self.best_model_val_score,
-                self.best_model_results_text,
+                self.train_scoring,
+                self.val_scoring,
             )
         ]
 
